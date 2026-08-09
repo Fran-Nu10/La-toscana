@@ -1,0 +1,329 @@
+/* The Classical design system is the token layer — every color, font, radius and
+   shadow below resolves to one of its variables. Vendored from
+   _ds/classical-e936a063-71a5-424d-8afa-cdebd59d5c1d/styles.css; re-copy that
+   file to pick up design-system changes rather than editing styles/classical.css. */
+@import '../styles/classical.css';
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TOKENS — mobile-first
+   Sizes are written for a 360–430px phone and grow from there. Every value is
+   fluid, so the layout is continuous between breakpoints instead of jumping at
+   device presets. Breakpoints exist only where the content needs one:
+
+     600px   a second column becomes readable (cards, promos, order)
+     900px   the editorial two-column spreads open up; desktop nav fits
+     1200px  the four-across dish grid and the full 1280px measure
+
+   ════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* — Layout — */
+  --page-max: 1280px;
+  --gutter: clamp(20px, 5.2vw, 32px);
+  /* Vertical rhythm: every section uses one of these two, nothing else. */
+  --section-y: clamp(56px, 8vw, 100px);
+  --section-y-lg: clamp(72px, 10vw, 130px);
+  /* Heading block → the content under it. */
+  --block-gap: clamp(28px, 5vw, 44px);
+  /* Between cards in a grid or a rail. */
+  --card-gap: clamp(16px, 3vw, 28px);
+  /* Minimum comfortable thumb target. */
+  --tap: 48px;
+
+  /* — Fluid type —
+     Display sizes stay editorial; functional text never drops below 15px. */
+  --fs-display: clamp(3rem, 9.5vw, 9.375rem); /* hero wordmark: 48 → 150 */
+  --fs-h1-sm: clamp(2.25rem, 7vw, 5.625rem); /* reservas / cierre: 36 → 90 */
+  --fs-h2: clamp(2rem, 4.4vw + 0.75rem, 4rem); /* 32 → 64 */
+  --fs-h2-sm: clamp(1.75rem, 3.4vw + 0.75rem, 3.5rem); /* 28 → 56 */
+  --fs-h3: clamp(1.375rem, 0.9vw + 1.15rem, 1.625rem); /* 22 → 26 */
+  --fs-lead: clamp(1.0625rem, 0.7vw + 0.92rem, 1.25rem); /* 17 → 20 */
+  --fs-body: clamp(0.9375rem, 0.3vw + 0.87rem, 1rem); /* 15 → 16 */
+  --fs-small: clamp(0.875rem, 0.2vw + 0.83rem, 0.9375rem); /* 14 → 15 */
+  --fs-kicker: 0.75rem; /* 12 — never smaller */
+  --fs-micro: 0.6875rem; /* 11 — decorative metadata only */
+
+  --lh-tight: 1.05;
+  --lh-heading: 0.95;
+  --lh-body: 1.65;
+
+  --tracking-kicker: 0.22em;
+  --tracking-label: 0.14em;
+
+  /* — Surface — */
+  /* Warm off-white for type on the dark sections: sits between the neutral ramp
+     and pure white so dark grounds stay candlelit rather than clinical. */
+  --ink-light: #efe9df;
+  --ink-light-soft: rgba(239, 233, 223, 0.72);
+  --ink-light-faint: rgba(239, 233, 223, 0.5);
+  --rule-light: rgba(239, 233, 223, 0.16);
+  --overlay-rgb: 24, 21, 18;
+
+  /* — Motion — */
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --dur-fast: 0.2s;
+  --dur: 0.35s;
+  --dur-slow: 0.7s;
+}
+
+@media (min-width: 900px) {
+  :root {
+    --tracking-kicker: 0.28em;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   BASE
+   ════════════════════════════════════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
+  /* Clears the sticky header on anchor jumps. */
+  scroll-padding-top: 76px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--color-accent-700);
+  text-decoration: none;
+  transition: color var(--dur-fast) ease;
+}
+
+/* Headings are set here once; sections only choose a size. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 400; /* the whisper weight is the system's signature — never bolded */
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SHARED PRIMITIVES
+   ════════════════════════════════════════════════════════════════════════ */
+
+.container {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  width: 100%;
+}
+
+/* Standard section shell: page measure, gutters, vertical rhythm. */
+.section {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--section-y) var(--gutter);
+}
+
+/* The design system's hairline, held to the page measure with no vertical
+   margin — a typographic rule between spreads, not a gap. */
+.pageRule {
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+/* Keyboard-only escape hatch past the header. */
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: 12px 18px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  font: 500 var(--fs-kicker) var(--font-body);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+.skipLink:focus-visible {
+  left: 16px;
+  top: 16px;
+}
+
+/* Small uppercase label above every heading. */
+.kicker {
+  margin: 0;
+  font: 500 var(--fs-kicker) / 1.4 var(--font-body);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+}
+.kicker--dark {
+  color: var(--color-accent-400);
+}
+.kicker--hero {
+  color: var(--color-accent-300);
+}
+
+.sectionTitle {
+  margin: 14px 0 0;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-heading);
+  text-transform: uppercase;
+}
+.sectionTitle--sm {
+  font-size: var(--fs-h2-sm);
+}
+.sectionTitle--dark {
+  color: var(--ink-light);
+}
+.sectionTitle--flush {
+  margin-top: 0;
+}
+
+/* Supporting paragraph under a heading. */
+.lede {
+  margin: 18px 0 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--color-neutral-700);
+  max-width: 56ch;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────
+   The design system's .btn is the base; these give it a real touch target and
+   the two dark-ground variants the photographic sections need. */
+
+.btn {
+  min-height: var(--tap);
+  padding-inline: 22px;
+  font-size: var(--fs-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color var(--dur) ease, border-color var(--dur) ease,
+    color var(--dur) ease, transform var(--dur-fast) var(--ease);
+}
+/* Touch feedback — every button dips under the thumb. */
+.btn:active {
+  transform: scale(0.985);
+}
+
+/* The commercial pair. Pedir leads; Reservar supports. */
+.btnPrimary {
+  color: var(--color-accent-700);
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.btnPrimary:active {
+  background: color-mix(in srgb, var(--color-accent) 26%, transparent);
+}
+
+.btnDark,
+.btnDarkAccent {
+  min-height: var(--tap);
+  font-size: var(--fs-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-inline: 26px;
+}
+.btnDarkAccent {
+  border-color: var(--color-accent-300);
+  color: var(--color-accent-200);
+  background: rgba(212, 150, 83, 0.12);
+}
+.btnDarkAccent:active {
+  background: rgba(212, 150, 83, 0.26);
+}
+.btnDark {
+  border-color: rgba(239, 233, 223, 0.42);
+  color: rgba(239, 233, 223, 0.92);
+}
+.btnDark:active {
+  background: rgba(239, 233, 223, 0.16);
+}
+.btnDark:focus-visible,
+.btnDarkAccent:focus-visible {
+  outline: 2px solid var(--color-accent-300);
+  outline-offset: 2px;
+}
+
+/* Uppercase link with the accent rule under it. Sized as a tap target — on
+   mobile these sit inside cards where they are the section's next action. */
+.ruleLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font: 500 var(--fs-kicker) var(--font-body);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-accent);
+  width: max-content;
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.ruleLink:active {
+  color: var(--color-accent);
+}
+
+/* Figures set tabular wherever they stand as figures, per the system's guidance. */
+.tnum {
+  font-feature-settings: 'tnum';
+}
+
+/* ── Hover ───────────────────────────────────────────────────────────────────
+   Guarded: a phone has no hover, and unguarded :hover sticks after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: var(--color-accent);
+  }
+  .ruleLink:hover {
+    border-color: var(--color-accent-700);
+  }
+  .btnPrimary:hover {
+    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+  .btnDarkAccent:hover {
+    background: rgba(212, 150, 83, 0.22);
+    color: var(--color-accent-200);
+  }
+  .btnDark:hover {
+    background: rgba(239, 233, 223, 0.12);
+    border-color: rgba(239, 233, 223, 0.7);
+    color: var(--ink-light);
+  }
+}
+
+/* ── Reveal on scroll ────────────────────────────────────────────────────────
+   Transform and opacity only — no layout work, no animation library. The `.js`
+   gate is set on <html> before first paint (see layout.tsx), so with scripting
+   off nothing is ever hidden. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .js .reveal,
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,116 @@
+.section {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--section-y) var(--gutter);
+}
+
+.head {
+  max-width: 640px;
+}
+
+.ways {
+  list-style: none;
+  margin: var(--block-gap) 0 0;
+  padding: 0;
+  display: grid;
+  border: 1px solid var(--color-divider);
+}
+
+.way {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: clamp(24px, 5.5vw, 38px) clamp(20px, 4.5vw, 32px);
+  border-bottom: 1px solid var(--color-divider);
+  transition: background-color var(--dur) ease;
+}
+.way:last-child {
+  border-bottom: 0;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.index {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
+  line-height: 1;
+  color: var(--color-accent-700);
+}
+
+.name {
+  margin: 0;
+  font-size: var(--fs-h3);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.description {
+  margin: 0;
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  color: var(--color-neutral-700);
+  max-width: 42ch;
+}
+
+.cta {
+  margin-top: 8px;
+  width: 100%;
+  min-height: 52px;
+}
+
+@media (min-width: 480px) {
+  .cta {
+    width: auto;
+    min-width: 220px;
+  }
+}
+
+/* Tablet: a full-width block with a short paragraph leaves half the row empty,
+   so the row turns horizontal — number, text, and the action on the right. */
+@media (min-width: 620px) and (max-width: 899px) {
+  .way {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: clamp(20px, 3vw, 32px);
+    row-gap: 0;
+  }
+  .cta {
+    margin-top: 0;
+  }
+}
+
+/* Three columns once each one still has room to breathe. */
+@media (min-width: 900px) {
+  .head {
+    text-align: center;
+    margin-inline: auto;
+  }
+  .ways {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .way {
+    border-bottom: 0;
+    border-right: 1px solid var(--color-divider);
+  }
+  /* The last column would otherwise double up with the container's own edge. */
+  .way:last-child {
+    border-right: 0;
+  }
+  .cta {
+    margin-top: auto;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .way:hover {
+    background: var(--color-accent-100);
+  }
+}

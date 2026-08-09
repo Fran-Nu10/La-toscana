@@ -1,0 +1,16 @@
+.bar {
+  background: var(--color-neutral-900);
+  color: var(--color-accent-200);
+  text-align: center;
+  padding: 8px var(--gutter);
+  font: 500 var(--fs-micro) / 1.4 var(--font-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+@media (min-width: 600px) {
+  .bar {
+    letter-spacing: 0.14em;
+  }
+}

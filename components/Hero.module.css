@@ -1,0 +1,167 @@
+.hero {
+  position: relative;
+  /* svh keeps the fold honest under mobile browser chrome. The subtraction is
+     the promo bar plus the header plus a peek: the hero ends just above the
+     fold, so a sliver of the next section says the page continues. The floor
+     keeps it composed on short screens. */
+  min-height: max(520px, calc(100svh - 150px));
+  display: flex;
+  background: var(--color-neutral-900);
+  overflow: hidden;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+}
+
+/* Weighted to the bottom, where the type sits — the food keeps the top of the
+   frame. One gradient, no flat overlay on top of it. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--overlay-rgb), 0.5) 0%,
+    rgba(var(--overlay-rgb), 0.18) 32%,
+    rgba(var(--overlay-rgb), 0.62) 74%,
+    rgba(var(--overlay-rgb), 0.88) 100%
+  );
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: calc(var(--section-y) + 24px) var(--gutter) clamp(28px, 7vw, 44px);
+  display: flex;
+  flex-direction: column;
+  /* Bottom-anchored on a phone. */
+  justify-content: flex-end;
+}
+
+.kicker {
+  margin: 0;
+}
+
+.title {
+  margin: 10px 0 0;
+  font-size: var(--fs-display);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+}
+
+.subtitle {
+  margin: 14px 0 0;
+  max-width: 22ch;
+  font-size: var(--fs-lead);
+  line-height: 1.35;
+  color: var(--ink-light);
+}
+
+/* The brand line is a grace note, not information — it steps aside on the
+   smallest screens so the CTAs stay above the fold. */
+.tagline {
+  display: none;
+  margin: 10px 0 0;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: clamp(1.0625rem, 1.6vw, 1.5rem);
+  color: var(--ink-light-soft);
+  max-width: 34ch;
+}
+
+.actions {
+  margin-top: clamp(22px, 5vw, 30px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action {
+  width: 100%;
+  min-height: 52px;
+}
+
+/* Two stacked lines on a phone — the pair does not fit on one at 360px, and a
+   wrapped separator dot reads as a typo. The dot returns when they share a line. */
+.meta {
+  margin: clamp(20px, 5vw, 26px) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: 500 var(--fs-kicker) var(--font-body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-light-faint);
+}
+
+.metaDot {
+  display: none;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-accent-400);
+}
+
+/* ── Breakpoints ─────────────────────────────────────────────────────────── */
+
+/* Room for the buttons to sit side by side. */
+@media (min-width: 480px) {
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .action {
+    width: auto;
+    min-width: 176px;
+  }
+  .tagline {
+    display: block;
+  }
+  .meta {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .metaDot {
+    display: block;
+  }
+}
+
+/* The desktop composition: centred, with the meta line under it. */
+@media (min-width: 900px) {
+  .hero {
+    min-height: min(88vh, 820px);
+  }
+  .content {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-block: var(--section-y-lg);
+  }
+  .subtitle {
+    max-width: 34ch;
+  }
+  .actions {
+    justify-content: center;
+  }
+  .meta {
+    justify-content: center;
+    letter-spacing: 0.22em;
+  }
+  .scrim {
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--overlay-rgb), 0.42) 0%,
+      rgba(var(--overlay-rgb), 0.16) 40%,
+      rgba(var(--overlay-rgb), 0.72) 100%
+    );
+  }
+}

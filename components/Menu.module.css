@@ -1,0 +1,245 @@
+.section {
+  background: var(--color-neutral-900);
+  color: var(--color-neutral-200);
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--section-y) var(--gutter);
+}
+
+.body {
+  margin: 16px 0 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--ink-light-soft);
+  max-width: 52ch;
+}
+
+/* ── Mobile: the categories are a chip rail ──────────────────────────────────
+   Six stacked rows would push the carta itself off the screen; as a rail they
+   cost one line and the panel stays in view while you switch. */
+.categories {
+  display: flex;
+  gap: 8px;
+  margin-top: var(--block-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-inline: var(--gutter);
+  margin-inline: calc(var(--gutter) * -1);
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+.categories::-webkit-scrollbar {
+  display: none;
+}
+
+.category {
+  scroll-snap-align: start;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  background: transparent;
+  border: 1px solid var(--rule-light);
+  border-radius: var(--radius-md);
+  color: var(--ink-light-soft);
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease;
+}
+.category:active {
+  background: rgba(239, 233, 223, 0.08);
+}
+.category:focus-visible {
+  outline: 2px solid var(--color-accent-300);
+  outline-offset: 2px;
+}
+
+.categoryActive {
+  color: var(--color-accent-300);
+  border-color: var(--color-accent-700);
+  background: rgba(212, 150, 83, 0.1);
+}
+
+.categoryName {
+  line-height: 1;
+}
+
+/* The count is an editorial detail for the desktop index, not for a chip. */
+.categoryCount {
+  display: none;
+  font: 500 var(--fs-micro) var(--font-body);
+  letter-spacing: 0.18em;
+}
+
+/* ── The carta ───────────────────────────────────────────────────────────── */
+
+.card {
+  margin-top: clamp(24px, 5vw, 32px);
+  border: 1px solid var(--rule-light);
+  padding: clamp(20px, 5vw, 34px);
+  align-self: start;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  border-bottom: 1px solid var(--color-accent-700);
+  padding-bottom: 12px;
+}
+
+.cardTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 4vw, 1.875rem);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-accent-300);
+}
+
+.cardMark {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--ink-light-faint);
+}
+
+.item {
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(239, 233, 223, 0.1);
+}
+.item:last-child {
+  border-bottom: 0;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.itemName {
+  font-size: var(--fs-body);
+  color: var(--ink-light);
+}
+
+/* The dotted leader that carries the eye to the price, as on a printed carta.
+   It needs room to read, so it only appears once the line is wide enough. */
+.leader {
+  display: none;
+  flex: 1;
+  border-bottom: 1px dotted rgba(239, 233, 223, 0.25);
+  transform: translateY(-4px);
+}
+
+.itemPrice {
+  font: 500 var(--fs-body) var(--font-body);
+  color: var(--color-accent-300);
+  white-space: nowrap;
+}
+
+.itemDescription {
+  margin: 4px 0 0;
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  color: var(--ink-light-soft);
+  max-width: 46ch;
+}
+
+.cardFoot {
+  margin-top: clamp(20px, 4vw, 26px);
+}
+
+.download {
+  width: 100%;
+  min-height: 52px;
+  /* One line at 360px — the label is long and the button is full width. */
+  font-size: var(--fs-kicker);
+  letter-spacing: 0.1em;
+  border-color: var(--color-accent-400);
+  color: var(--color-accent-300);
+}
+.download:active {
+  background: rgba(212, 150, 83, 0.2);
+}
+
+/* ── From 480px the leader fits ──────────────────────────────────────────── */
+@media (min-width: 480px) {
+  .leader {
+    display: block;
+  }
+}
+
+/* ── Two columns: the index returns as a vertical list ───────────────────── */
+@media (min-width: 900px) {
+  .inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 64px);
+    padding-block: var(--section-y-lg);
+  }
+
+  .categories {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: visible;
+    padding-inline: 0;
+    margin-inline: 0;
+    scroll-snap-type: none;
+  }
+
+  .category {
+    justify-content: space-between;
+    width: 100%;
+    min-height: 56px;
+    padding: 0 4px;
+    border: 0;
+    border-bottom: 1px solid var(--rule-light);
+    border-radius: 0;
+    background: transparent;
+    font-size: 1.625rem;
+    color: rgba(239, 233, 223, 0.85);
+    transition: color var(--dur-fast) ease, padding-left var(--dur) var(--ease);
+  }
+  .categoryActive {
+    color: var(--color-accent-300);
+    background: transparent;
+    border-bottom-color: var(--color-accent-700);
+  }
+  .categoryCount {
+    display: block;
+  }
+
+  .card {
+    margin-top: 0;
+    align-self: start;
+  }
+
+  .download {
+    width: 100%;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .category:hover {
+    color: var(--color-accent-300);
+    border-color: var(--color-accent-700);
+  }
+  .download:hover {
+    background: rgba(212, 150, 83, 0.16);
+    color: var(--color-accent-200);
+  }
+}

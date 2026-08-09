@@ -1,0 +1,94 @@
+.section {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--section-y-lg) var(--gutter) var(--section-y);
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-gap);
+}
+
+.body {
+  margin: 18px 0 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--color-neutral-700);
+  max-width: 54ch;
+  /* Justified copy needs a wide measure to avoid rivers; on a phone it stays
+     ragged-right, which is the readable setting at this width. */
+  text-align: left;
+}
+
+/* Three figures reading as one line of proof, not three cards. */
+.stats {
+  margin: clamp(26px, 6vw, 34px) 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  border-top: 1px solid var(--color-divider);
+  padding-top: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.statValue {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 6vw, 2.125rem);
+  line-height: 1;
+  color: var(--color-accent-700);
+}
+
+.statLabel {
+  font: 500 var(--fs-micro) var(--font-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  text-wrap: balance;
+}
+
+/* The photographs: a stacked pair on a phone, staggered from 900px. */
+.photos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 2.5vw, 16px);
+  min-width: 0;
+}
+
+.plate {
+  aspect-ratio: 3 / 4;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (min-width: 600px) {
+  .body {
+    text-align: justify;
+    hyphens: auto;
+  }
+  .stats {
+    gap: 24px;
+  }
+}
+
+@media (min-width: 900px) {
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 56px);
+    align-items: center;
+  }
+  .plate {
+    aspect-ratio: 4 / 5;
+  }
+  /* The stagger that keeps the pair from reading as a single band. */
+  .plateOffset {
+    margin-top: 34px;
+  }
+}

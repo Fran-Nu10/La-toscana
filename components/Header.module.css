@@ -1,0 +1,308 @@
+/* Sticky because the primary action rides in it: "Pedir" is one thumb-reach
+   away from anywhere on the page, without a bottom bar or any app chrome. */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  border-bottom: 1px solid transparent;
+  transition: background-color var(--dur) ease, border-color var(--dur) ease;
+}
+
+.scrolled {
+  background: color-mix(in srgb, var(--color-bg) 96%, transparent);
+  border-bottom-color: var(--color-divider);
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: 8px var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(1.1875rem, 1vw + 1rem, 1.375rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  white-space: nowrap;
+  margin-right: auto;
+}
+
+/* ── Desktop navigation ──────────────────────────────────────────────────── */
+
+.nav {
+  display: none;
+  gap: clamp(14px, 1.6vw, 24px);
+}
+
+.navLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font: 500 var(--fs-kicker) var(--font-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+  white-space: nowrap;
+}
+.navLink::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  height: 1px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Compact in the bar — the tap target stays 44px through min-height. */
+.order,
+.reserve {
+  min-height: 44px;
+  padding-inline: 16px;
+  font-size: var(--fs-kicker);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* Reservar joins the bar only when there is room for both. */
+.reserve {
+  display: none;
+}
+
+/* ── Menu trigger ────────────────────────────────────────────────────────── */
+
+.trigger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  width: 44px;
+  height: 44px;
+  padding: 0 3px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.trigger .bar:first-child {
+  width: 22px;
+}
+.trigger .bar:last-child {
+  width: 15px;
+}
+
+.bar {
+  display: block;
+  height: 1px;
+  background: var(--color-text);
+  transition: width var(--dur) var(--ease);
+}
+.trigger:active .bar:last-child {
+  width: 22px;
+}
+.trigger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── The menu panel ──────────────────────────────────────────────────────────
+   A full page of its own rather than a squeezed copy of the desktop nav. */
+
+.panel {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  padding: 8px var(--gutter) calc(var(--gutter) + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease),
+    visibility 0s linear var(--dur);
+}
+
+.panelOpen {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  margin-bottom: clamp(20px, 5vw, 36px);
+}
+
+.close {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.closeBar {
+  position: absolute;
+  left: 11px;
+  top: 21px;
+  width: 22px;
+  height: 1px;
+  background: var(--color-text);
+}
+.closeBar:first-child {
+  transform: rotate(45deg);
+}
+.closeBar:last-child {
+  transform: rotate(-45deg);
+}
+.close:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.panelNav {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-divider);
+}
+
+.panelLink {
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  line-height: 1;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-divider);
+  transition: color var(--dur-fast) ease, padding-left var(--dur) var(--ease);
+}
+.panelLink:active {
+  color: var(--color-accent-700);
+  padding-left: 8px;
+}
+
+.panelActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: clamp(24px, 6vw, 36px);
+}
+
+.panelCta {
+  width: 100%;
+  min-height: 52px;
+}
+
+.panelContact {
+  margin-top: auto;
+  padding-top: clamp(28px, 7vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.panelHours,
+.panelLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--fs-small);
+  color: var(--color-neutral-700);
+  font-feature-settings: 'tnum';
+}
+
+.panelClosed {
+  color: var(--color-neutral-600);
+}
+
+.panelLinks {
+  gap: 8px;
+}
+.panelLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  width: max-content;
+}
+
+/* ── Breakpoints ─────────────────────────────────────────────────────────── */
+
+/* Both commercial actions fit side by side. */
+@media (min-width: 600px) {
+  .reserve {
+    display: inline-flex;
+  }
+}
+
+/* The full navigation fits: the panel and its trigger retire. */
+@media (min-width: 900px) {
+  .inner {
+    min-height: 64px;
+    gap: 20px;
+  }
+  .brand {
+    margin-right: clamp(8px, 2vw, 28px);
+  }
+  .nav {
+    display: flex;
+    flex: 1;
+    margin-right: auto;
+  }
+  .trigger {
+    display: none;
+  }
+  .panel {
+    display: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .brand:hover {
+    color: var(--color-accent-700);
+  }
+  .navLink:hover {
+    color: var(--color-text);
+  }
+  .navLink:hover::after {
+    transform: scaleX(1);
+  }
+  .panelLink:hover {
+    color: var(--color-accent-700);
+    padding-left: 8px;
+  }
+}

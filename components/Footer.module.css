@@ -1,0 +1,86 @@
+.footer {
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-bg);
+}
+
+.grid {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: clamp(40px, 8vw, 64px) var(--gutter) clamp(20px, 4vw, 28px);
+  display: grid;
+  gap: clamp(28px, 6vw, 40px);
+}
+
+.brand {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(1.5rem, 5vw, 1.625rem);
+  line-height: 1;
+}
+
+.about {
+  margin: 10px 0 0;
+  font-size: var(--fs-small);
+  line-height: 1.65;
+  color: var(--color-neutral-700);
+  max-width: 34ch;
+}
+
+.heading {
+  font: 500 var(--fs-micro) var(--font-body);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  margin-bottom: 10px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Footer links are a common exit on mobile — they get a real tap height. */
+.link,
+.text {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: var(--fs-small);
+  color: var(--color-neutral-700);
+}
+
+.link:active {
+  color: var(--color-accent);
+}
+
+.bottom {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: 16px var(--gutter) calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-divider);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: var(--fs-micro);
+  color: var(--color-neutral-500);
+}
+
+@media (min-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    color: var(--color-accent-700);
+  }
+}

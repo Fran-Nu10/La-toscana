@@ -1,0 +1,101 @@
+.section {
+  background: var(--color-neutral-100);
+  border-top: 1px solid var(--color-divider);
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--section-y) var(--gutter);
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-gap);
+}
+
+.rows {
+  margin: clamp(22px, 5vw, 28px) 0 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-divider);
+}
+
+/* Label above value on a phone — a 110px label column would leave the value
+   with barely 30 characters at 360px. */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.label {
+  font: 500 var(--fs-micro) var(--font-body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+}
+
+.value {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--color-neutral-800);
+}
+
+/* The whole row reads as tappable where there is somewhere to go. */
+.valueLink {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: -6px;
+  color: var(--color-accent-700);
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.plate {
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mapLink {
+  width: 100%;
+  min-height: 52px;
+}
+
+@media (min-width: 520px) {
+  .row {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 24px;
+    padding-block: 13px;
+  }
+  .label {
+    width: 110px;
+    flex: none;
+  }
+  .mapLink {
+    width: auto;
+    min-width: 240px;
+    align-self: flex-start;
+  }
+}
+
+@media (min-width: 900px) {
+  .inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 56px);
+    align-items: center;
+  }
+  .plate {
+    aspect-ratio: 3 / 2;
+  }
+}
