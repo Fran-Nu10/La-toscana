@@ -1,8 +1,20 @@
-# La Toscana — sitio web
+# La Toscana
 
-Homepage de **La Toscana**, restaurante gastronómico en Florida, Uruguay.
-Implementación en Next.js del diseño exportado desde Claude Design
-(`../project/La Toscana Web.dc.html`), sobre el design system **Classical**.
+Sitio web de **La Toscana**, restaurante gastronómico en Florida, Uruguay.
+
+Una homepage editorial de scroll largo, pensada desde el celular: fotografía
+grande, tipografía con carácter y dos acciones claras — **pedir** y **reservar**.
+No es una app metida en una pantalla de teléfono ni una plantilla de restaurante:
+es una web responsive con identidad propia.
+
+**Stack:** Next.js 15 (App Router) · React 19 · TypeScript · CSS Modules
+**Deploy:** Vercel · página estática (`○ prerendered as static content`)
+
+---
+
+## Empezar
+
+Requiere Node 20 o superior.
 
 ```bash
 npm install
@@ -11,148 +23,169 @@ npm run build      # build de producción
 npm run typecheck  # tsc --noEmit
 ```
 
-## Cómo está armado
+---
+
+## Qué hay en la página
+
+Una sola homepage, en este orden: barra de promo · header · hero · la
+experiencia · platos de la casa · la carta · formas de pedir · promos de la
+semana · reservas · eventos y celebraciones · galería · testimonios · ubicación ·
+cierre · footer.
+
+El orden no es decorativo: primero el impacto, después la historia, después las
+dos cosas que la persona vino a hacer (pedir, reservar), y recién al final las
+pruebas y los datos prácticos.
+
+---
+
+## Estructura
 
 | Carpeta | Qué hay |
 | --- | --- |
-| `app/` | `layout.tsx` (metadata, JSON-LD del restaurante), `page.tsx` (la homepage), `globals.css` |
-| `components/` | Una sección por archivo, cada una con su CSS Module |
-| `content/` | **Todo el texto, precios y datos de contacto** |
-| `styles/classical.css` | El design system, copiado tal cual desde el bundle |
+| `app/` | `layout.tsx` (metadata + JSON-LD del restaurante), `page.tsx` (la homepage), `globals.css` (tokens y primitivas), `icon.svg` |
+| `components/` | Una sección por archivo, cada una con su CSS Module al lado |
+| `content/` | **Todo el texto, los precios y los datos de contacto** |
+| `styles/classical.css` | El design system, copiado tal cual desde su bundle |
+| `public/fotos/` | Donde van las fotos reales |
 
-La página es estática (`○ prerendered as static content`): se sirve desde CDN y
-sólo hidrata las tres piezas interactivas — el header móvil, el selector de
-categorías de la carta y "cargar más platos".
+Sólo hidratan tres piezas en el cliente: el menú del header, el selector de
+categorías de la carta y el botón "cargar más platos". Todo lo demás es HTML
+estático.
 
-### El contenido vive en un solo lugar
+---
 
-Ningún componente tiene texto adentro. Todo sale de `content/site.ts`, tipado en
-`content/types.ts` y leído a través de `getSiteContent()`:
+## Editar el contenido
 
-- cambiar un precio, un horario o el teléfono → `content/site.ts`
-- agregar un plato → un objeto más en `dishes.items` (el botón "cargar más" se
-  ajusta solo: muestra `initialCount` y revela de a `step`)
-- agregar una categoría a la carta → un objeto más en `menu.categories`
+**Ningún componente tiene texto adentro.** Todo sale de `content/site.ts`, tipado
+en `content/types.ts`. Para los cambios del día a día no hace falta tocar nada más:
 
-Cuando el contenido pase a un CMS o a una API, el único archivo que cambia es
-`content/index.ts` — la función ya es `async` y ya se llama desde un Server
-Component, así que nada río abajo se entera:
+| Quiero cambiar… | Dónde |
+| --- | --- |
+| Un precio, un horario, el teléfono | `content/site.ts` |
+| Agregar un plato destacado | Un objeto más en `dishes.items` |
+| Agregar un plato a la carta | Un objeto más en la categoría de `menu.categories` |
+| La promo de la barra superior | `promoBar.text` (o `enabled: false` para apagarla) |
+| Los mensajes de WhatsApp | La función `whatsapp()` arriba de `content/site.ts` |
+
+El botón **"cargar más platos"** se ajusta solo: muestra `dishes.initialCount` y
+revela de a `dishes.step`. Si mañana hay 30 platos, sigue funcionando igual.
+
+### Cuando el contenido pase a un CMS
+
+`content/index.ts` es el único punto de lectura. Ya es `async` y ya se llama desde
+un Server Component, así que migrar a un CMS o a una API es cambiar una función y
+nada más:
 
 ```ts
 export async function getSiteContent(): Promise<SiteContent> {
-  const res = await fetch(`${process.env.CMS_URL}/homepage`, { next: { revalidate: 300 } })
+  const res = await fetch(`${process.env.CMS_URL}/homepage`, {
+    next: { revalidate: 300 },
+  })
   return toSiteContent(await res.json())
 }
 ```
 
-### Las fotos
+---
 
-`content/photos.ts` es el único archivo con imágenes. Hoy apunta a fotos libres
-de Unsplash **como provisorio**: el diseño está hecho para que la fotografía sea
-la protagonista, así que conviene reemplazarlas por fotos reales del salón, la
-cocina y los platos antes de publicar.
+## Las fotos
 
-Para reemplazarlas: poné los archivos en `public/fotos/` y cambiá `src` a
-`/fotos/sorrentinos.jpg`. No hay que tocar ningún componente — `<Photo>` acepta
-tanto una URL del CDN (a la que le arma el `srcset`) como una ruta local.
+> **Las fotos actuales son provisorias.** Son imágenes libres de Unsplash puestas
+> para poder ver la página terminada. La fotografía es el activo más importante de
+> este sitio: conviene reemplazarlas por fotos reales del salón, la cocina y los
+> platos antes de publicar.
 
-Cada foto declara un `tone`: un lavado cálido que se ve mientras la imagen carga
-y que queda en su lugar si el archivo falta, para que un hueco nunca se vea como
-una imagen rota.
+`content/photos.ts` es el único archivo con imágenes. Para reemplazarlas:
 
-> **Nota:** las URLs de Unsplash se escribieron sin poder abrirlas (el entorno
-> donde se implementó tiene bloqueado el acceso a CDNs de imágenes), así que
-> conviene revisar de una pasada que las 18 carguen. Si alguna no existe, se ve
-> el lavado cálido en lugar de la foto y se arregla cambiando esa línea.
+1. Poné los archivos en `public/fotos/`.
+2. Cambiá el `src` a `/fotos/sorrentinos.jpg`.
 
-## Lo que quedó como diseño, no como función
+No hay que tocar ningún componente. `<Photo>` acepta tanto una URL de CDN como una
+ruta local.
 
-El diseño es la vista comercial completa; estas piezas están listas visualmente
-pero todavía no tienen backend:
+Cada foto declara además:
 
-- **Reservas** — los CTA abren WhatsApp con el mensaje escrito. No hay
-  disponibilidad ni confirmación automática todavía.
+- **`alt`** — texto real en español; es un sitio público, importa.
+- **`tone`** — un lavado cálido que se ve mientras la imagen carga y que queda en
+  su lugar si el archivo falta, para que un hueco nunca se vea como una imagen rota.
+- **`focal`** *(opcional)* — el `object-position` del recorte. En el celular los
+  marcos son verticales y en escritorio apaisados; esto mantiene el plato en cuadro
+  en los dos.
+
+---
+
+## Diseño
+
+El sistema visual es **Classical** (`styles/classical.css`): fondo claro casi
+neutro, Cormorant Garamond sobre Lora, filetes de 1px, botones delineados y fotos
+montadas como láminas (`.plate`). Ningún color, tipografía ni radio está escrito a
+mano — todo sale de `var(--*)`. Para actualizar el sistema, se vuelve a copiar ese
+archivo.
+
+### Mobile-first
+
+Las reglas base son las de 360–430px y los breakpoints **agregan**, no corrigen.
+Espaciado y tipografía son tokens fluidos (`clamp()`) definidos en `app/globals.css`:
+`--gutter`, `--section-y`, `--block-gap`, `--card-gap`, `--tap` (48px) y la escala
+`--fs-display … --fs-micro`.
+
+Los breakpoints están donde el contenido los pide, no por dispositivo:
+
+- **600px** — entra una segunda columna
+- **900px** — se abren los spreads a dos columnas y aparece la navegación de escritorio
+- **1200px** — la grilla de platos pasa a cuatro
+
+Patrones propios del celular: rieles con **scroll-snap** en platos y galería (CSS
+nativo, sin librería de carrusel), **chips horizontales** para las categorías de la
+carta, y una **agenda** para las promos de la semana.
+
+Verificado a 360 / 390 / 430 / 600 / 768 / 1024 / 1280 / 1440 / 1920: sin scroll
+horizontal, sin elementos fuera del viewport, ningún control de menos de 40px de
+alto y ningún texto funcional por debajo de 11px.
+
+### Accesibilidad
+
+HTML semántico, un solo `h1` y jerarquía de encabezados sin saltos, `alt` en todas
+las fotos, skip link, y el anillo de foco del design system. La carta es un
+`tablist` navegable con flechas; el menú móvil bloquea el scroll, mueve el foco,
+cierra con `Escape`, lo devuelve al botón y queda `inert` mientras está cerrado.
+
+### Performance
+
+Sin librerías de animación ni de carrusel. Las animaciones usan sólo `transform` y
+`opacity`, y se apagan enteras con `prefers-reduced-motion`. Todo `:hover` está
+detrás de `@media (hover: hover)` para que no quede pegado después de un toque.
+Las imágenes van por `next/image` con `sizes` real y un marco con `aspect-ratio`
+fijo, así que el espacio queda reservado y no hay layout shift; sólo el hero es
+`priority`. Primer load: **~113 kB** de JavaScript, casi todo el runtime de Next.
+
+---
+
+## Deploy
+
+El proyecto está en la raíz del repo, así que Vercel lo detecta solo:
+
+1. [vercel.com/new](https://vercel.com/new) → **Import Git Repository** → `Fran-Nu10/La-toscana`
+2. Framework **Next.js**, Root Directory `./`, el resto por defecto
+3. **Deploy** — no hace falta ninguna variable de entorno para que levante
+
+| Variable | Para qué |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | El dominio de producción. Sin ella el sitio funciona igual, pero las URLs absolutas de Open Graph no resuelven. |
+
+Cada push a `main` dispara un deploy nuevo.
+
+---
+
+## Estado
+
+La homepage es la **vista comercial completa**. Estas piezas están listas
+visualmente pero todavía no tienen backend:
+
+- **Reservas** — los CTA abren WhatsApp con el mensaje ya escrito. No hay
+  disponibilidad ni confirmación automática.
 - **Pedidos** (delivery / retiro / WhatsApp) — los tres caminos abren WhatsApp.
   No hay carrito ni pasarela de pago.
-- **"Descargar menú completo"** — apunta a `#menu` hasta que exista el PDF;
-  cambiá `menu.downloadHref` cuando esté.
-- **Ubicación** — hay foto + link a Google Maps. Para embeber el mapa hace falta
+- **"Descargar menú completo"** — apunta a `#menu` hasta que exista el PDF; se
+  cambia en `menu.downloadHref`.
+- **Ubicación** — hay foto y link a Google Maps. Para embeber el mapa hace falta
   la dirección exacta; el link ya está en `location.mapHref`.
-- **Promo bar** — se apaga con `promoBar.enabled: false` en `content/site.ts`.
-
-## Sistema responsive (mobile-first)
-
-El sitio está escrito desde el teléfono hacia afuera: las reglas base son las de
-360–430px y los breakpoints agregan, nunca corrigen.
-
-**Tokens** (`app/globals.css`). Nada de márgenes sueltos ni tamaños arbitrarios:
-
-| Token | Para qué |
-| --- | --- |
-| `--gutter` | Margen lateral de página: `clamp(20px, 5.2vw, 32px)` |
-| `--section-y` / `--section-y-lg` | Los dos únicos ritmos verticales de sección |
-| `--block-gap` | Del título al contenido |
-| `--card-gap` | Entre tarjetas |
-| `--tap` | 48px — alto mínimo de un control |
-| `--fs-display … --fs-micro` | Escala tipográfica fluida, toda en `clamp()` |
-
-**Breakpoints**, puestos donde el contenido los pide y no por dispositivo:
-
-- **600px** — entra una segunda columna (platos, promos, footer)
-- **900px** — se abren los spreads editoriales a dos columnas y entra la
-  navegación de escritorio; el panel de menú se retira
-- **1200px** — la grilla de platos pasa a cuatro y se usa la medida completa
-
-Hay tres ajustes puntuales fuera de esa escala (480px para que los botones del
-hero entren en fila, 620–899px para la fila horizontal de "Pedí como quieras",
-700px para la grilla de galería). Cada uno está comentado en su archivo.
-
-**Patrones móviles**
-
-- **Rieles con scroll-snap** en Platos y Galería: la foto se mantiene grande y
-  la próxima tarjeta asoma. Es CSS nativo — sin librería de carrusel, sin JS.
-- **Chips horizontales** para las categorías de la carta: seis filas apiladas
-  empujaban la carta fuera de pantalla.
-- **Agenda** en Promos: el día como ancla en su columna, la semana se lee de
-  un saque.
-- **Fila horizontal** en Pedí como quieras entre 620 y 899px, donde una tarjeta
-  a ancho completo dejaba media fila vacía.
-
-**Jerarquía de CTA.** Pedir es la acción primaria en toda la página (en la barra
-sticky, en el hero, en el menú); Reservar acompaña. La barra sticky lleva el
-CTA — no hay navegación inferior ni chrome de app.
-
-**Verificado** a 360 / 390 / 430 / 600 / 768 / 1024 / 1280 / 1440 / 1920: sin
-scroll horizontal, sin elementos fuera de viewport, ningún control de menos de
-40px de alto, ningún texto funcional bajo 11px.
-
-## Detalles de implementación
-
-- **Tokens.** Ningún color, tipografía ni radio está hardcodeado: todo sale de
-  `var(--*)` de `styles/classical.css`. Para actualizar el design system,
-  volvé a copiar ese archivo desde el bundle.
-- **Tipografías.** Cormorant Garamond y Lora se cargan por `@import` de Google
-  Fonts dentro del stylesheet del design system.
-- **Imágenes.** Todas pasan por `next/image` con `fill` y un `sizes` real, sobre
-  un marco con `aspect-ratio` fijo: el espacio queda reservado antes de que
-  llegue el archivo, así que no hay layout shift. Sólo el hero es `priority`;
-  el resto es lazy. Cada foto puede declarar un `focal` (`object-position`) para
-  sobrevivir al recorte vertical del celular.
-- **Performance.** La página es estática y sólo hidratan tres piezas (header,
-  carta, cargar más). Los rieles son scroll-snap de CSS, las animaciones son
-  sólo `transform`/`opacity`, y no hay ninguna librería de animación ni de
-  carrusel. Primer load: ~113 kB de JS, casi todo el runtime de Next.
-- **Micro-interacciones.** Las secciones aparecen con un fade-up al entrar en
-  pantalla (`components/Reveal.tsx`). El efecto está detrás de una clase `.js`
-  que se pone antes del primer pintado, así que sin JavaScript nada queda
-  invisible, y se desactiva entero con `prefers-reduced-motion`. Todo `:hover`
-  está detrás de `@media (hover: hover)` para que no quede pegado tras un toque;
-  los estados táctiles usan `:active`.
-- **Accesibilidad.** La carta es un `tablist` navegable con flechas, el menú
-  móvil bloquea el scroll, mueve el foco, cierra con `Escape` y devuelve el foco
-  al botón; cerrado queda `inert` (fuera del orden de tabulación). Hay skip link,
-  jerarquía de encabezados sin saltos (un solo `h1`), `alt` en todas las fotos y
-  el foco usa el anillo del design system.
-- **SEO.** `metadata` en español rioplatense + JSON-LD `Restaurant` con horarios
-  y teléfono. Definí `NEXT_PUBLIC_SITE_URL` cuando haya dominio para que las
-  URLs absolutas de Open Graph se resuelvan.
