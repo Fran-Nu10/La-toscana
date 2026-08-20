@@ -157,8 +157,9 @@
   color: var(--ink-light-soft);
   max-width: 46ch;
 }
-.add { margin-top: 10px; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-accent-700); background: transparent; color: var(--color-accent-300); font: 500 var(--fs-kicker) var(--font-body); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.add { margin-top: 10px; min-height: 42px; padding: 0 14px; border: 1px solid var(--color-accent-700); background: transparent; color: var(--color-accent-300); font: 500 var(--fs-kicker) var(--font-body); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition:background .2s,color .2s; }
 .add:disabled { opacity: .45; cursor: not-allowed; }
+.added{background:var(--color-accent-700);color:white}.customize{margin:8px 0 0;color:var(--color-accent-300);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase}.configurable{cursor:pointer}.configurable:focus-within{outline:1px solid var(--color-accent-700);outline-offset:5px}
 
 .cardFoot {
   margin-top: clamp(20px, 4vw, 26px);
@@ -245,5 +246,3 @@
     color: var(--color-accent-200);
   }
 }
-.option { display: block; margin-top: 10px; color: var(--ink-light-soft); font-size: var(--fs-small); }
-.option select { display: block; width: 100%; min-height: 42px; margin-top: 4px; padding: 6px 10px; border: 1px solid var(--rule-light); background: var(--color-neutral-900); color: var(--ink-light); }
