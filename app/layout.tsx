@@ -80,8 +80,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body>
         <CommerceProvider><CartProvider>
 
-        <CartProvider>
-
         {/* Gates the reveal animation on scripting so the page is never hidden
             when JS is off or still loading. Runs before the body paints. */}
         <script
@@ -94,8 +92,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd(site)) }}
         />
         </CartProvider></CommerceProvider>
-
-        </CartProvider>
       </body>
     </html>
   )
