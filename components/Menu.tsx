@@ -1,22 +1,25 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { SiteContent } from '@/content'
 import type { Product } from '@/data/types'
 import { formatUyu } from '@/lib/order'
 import { useCart } from './CartProvider'
 import { useCommerce } from './CommerceProvider'
 import styles from './Menu.module.css'
+import { ProductConfigurator } from './ProductConfigurator'
 
 function nextIndex(key: string, current: number, total: number) { if (key === 'ArrowDown' || key === 'ArrowRight') return (current + 1) % total; if (key === 'ArrowUp' || key === 'ArrowLeft') return (current - 1 + total) % total; if (key === 'Home') return 0; if (key === 'End') return total - 1; return null }
 function BuyProduct({ product }: { product: Product }) {
-  const cart = useCart(); const [selected, setSelected] = useState<Record<string, string>>({})
-  const missing = product.options.some(option => option.required && !selected[option.id])
-  return <div className={styles.item}>
+  const cart = useCart(); const [configuring, setConfiguring] = useState(false); const [added, setAdded] = useState(false)
+  useEffect(() => { if (!added) return; const timer=setTimeout(()=>setAdded(false),1800); return()=>clearTimeout(timer) }, [added])
+  function simpleAdd(){cart.add(product,[],1,'',false);setAdded(true)}
+  return <div className={`${styles.item} ${product.options.length ? styles.configurable : ''}`} onClick={() => product.options.length && setConfiguring(true)}>
     <div className={styles.itemRow}><span className={styles.itemName}>{product.name}</span><span className={styles.leader} aria-hidden="true"/><span className={`${styles.itemPrice} tnum`}>{formatUyu(product.priceCents)}</span></div>
     <div className={styles.itemDescription}>{product.description}</div>
-    {product.options.map(option => <label className={styles.option} key={option.id}>{option.name}{option.required && ' *'}<select value={selected[option.id] ?? ''} onChange={event => setSelected(value => ({ ...value, [option.id]: event.target.value }))}><option value="">Elegir</option>{option.choices.filter(choice => choice.available).map(choice => <option key={choice.id} value={choice.id}>{choice.name}{choice.priceDeltaCents ? ` (+${formatUyu(choice.priceDeltaCents)})` : ''}</option>)}</select></label>)}
-    <button type="button" className={styles.add} disabled={missing} onClick={() => cart.add(product, Object.entries(selected).map(([optionId, choiceId]) => ({ optionId, choice: product.options.find(option => option.id === optionId)!.choices.find(choice => choice.id === choiceId)! })))}>{missing ? 'Elegí las opciones' : 'Agregar al pedido'}</button>
+    {!!product.options.length && <p className={styles.customize}>Personalizable · {product.options.length} {product.options.length === 1 ? 'opción' : 'opciones'}</p>}
+    <button type="button" className={`${styles.add} ${added ? styles.added : ''}`} onClick={event => {event.stopPropagation();product.options.length?setConfiguring(true):simpleAdd()}}>{added ? '✓ Agregado' : product.options.length ? 'Elegir opciones' : '+ Agregar'}</button>
+    {configuring && <ProductConfigurator product={product} onClose={()=>setConfiguring(false)} onConfirm={(selections,quantity,notes)=>{cart.add(product,selections,quantity,notes,false);setAdded(true)}}/>}
   </div>
 }
 export function Menu({ menu }: { menu: SiteContent['menu'] }) {
