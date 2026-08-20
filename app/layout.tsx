@@ -6,6 +6,7 @@ import { CartProvider } from '@/components/CartProvider'
 import { Cart } from '@/components/Cart'
 import { CommerceProvider } from '@/components/CommerceProvider'
 
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const viewport: Viewport = {
@@ -78,6 +79,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="es-UY">
       <body>
         <CommerceProvider><CartProvider>
+
+        <CartProvider>
+
         {/* Gates the reveal animation on scripting so the page is never hidden
             when JS is off or still loading. Runs before the body paints. */}
         <script
@@ -90,6 +94,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd(site)) }}
         />
         </CartProvider></CommerceProvider>
+
+        </CartProvider>
       </body>
     </html>
   )
