@@ -5,10 +5,12 @@ export interface CheckoutInput { customer: { name: string; phone: string; email:
 export function createOrder(data: CommerceData, cart: CartLine[], input: CheckoutInput): Order {
   if (!data.settings.orderingOpen) throw new Error('Los pedidos están cerrados en este momento.')
   if (!cart.length) throw new Error('El carrito está vacío.')
+  if (input.customer.name.trim().length < 2 || input.customer.phone.trim().length < 6) throw new Error('Revisá el nombre y el teléfono.')
   if (input.fulfillment === 'delivery' && !data.settings.deliveryEnabled) throw new Error('Delivery no está disponible.')
   if (input.fulfillment === 'pickup' && !data.settings.pickupEnabled) throw new Error('Retiro no está disponible.')
   if (input.fulfillment === 'delivery' && input.address.trim().length < 5) throw new Error('Ingresá una dirección válida.')
   const items = cart.map(line => {
+    if (!Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > 20) throw new Error('Revisá la cantidad del producto.')
     const product = data.products.find(item => item.id === line.productId && item.available)
     if (!product) throw new Error(`${line.name} ya no está disponible.`)
     const choices = line.selections.map(selection => {
@@ -17,6 +19,7 @@ export function createOrder(data: CommerceData, cart: CartLine[], input: Checkou
       if (!option || !choice) throw new Error(`Revisá las opciones de ${product.name}.`)
       return { optionId: option.id, choiceId: choice.id, optionName: option.name, choiceName: choice.name, priceDeltaCents: choice.priceDeltaCents }
     })
+    if (new Set(choices.map(choice => choice.optionId)).size !== choices.length) throw new Error(`Revisá las opciones de ${product.name}.`)
     for (const option of product.options.filter(item => item.required)) if (!choices.some(item => item.optionId === option.id)) throw new Error(`Elegí ${option.name} para ${product.name}.`)
     const unit = product.priceCents + choices.reduce((sum, choice) => sum + choice.priceDeltaCents, 0)
     return { productId: product.id, productName: product.name, unitPriceCents: product.priceCents, quantity: line.quantity, choices, notes: line.notes, lineTotalCents: unit * line.quantity }

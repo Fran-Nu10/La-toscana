@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCart } from './CartProvider'
-import { formatUyu } from '@/lib/order'
+import { formatUyu, lineTotal } from '@/lib/order'
 import styles from './Cart.module.css'
 
 export function Cart() {
@@ -17,7 +17,8 @@ export function Cart() {
       <div className={styles.lines}>
         {!cart.lines.length && <p>Tu carrito está vacío. Elegí algo de la carta.</p>}
         {cart.lines.map(line => <article key={line.key}>
-          <div className={styles.lineHead}><strong>{line.name}</strong><span>{formatUyu(line.unitPriceCents * line.quantity)}</span></div>
+          <div className={styles.lineHead}><strong>{line.name}</strong><span>{formatUyu(lineTotal(line))}</span></div>
+          {!!line.selections.length && <ul>{line.selections.map(choice => <li key={choice.choiceId}>{choice.name}{choice.priceCents ? ` (+${formatUyu(choice.priceCents)})` : ''}</li>)}</ul>}
           <div className={styles.controls}><button onClick={() => cart.quantity(line.key, line.quantity - 1)} aria-label="Quitar uno">−</button><span>{line.quantity}</span><button onClick={() => cart.quantity(line.key, line.quantity + 1)} aria-label="Agregar uno">+</button><button className={styles.remove} onClick={() => cart.remove(line.key)}>Eliminar</button></div>
           <label>Observaciones<input value={line.notes} maxLength={300} placeholder="Sin cebolla, bien cocido…" onChange={event => cart.notes(line.key, event.target.value)} /></label>
         </article>)}
