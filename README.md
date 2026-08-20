@@ -178,14 +178,12 @@ Cada push a `main` dispara un deploy nuevo.
 
 ## Estado
 
-La homepage es la **vista comercial completa**. Estas piezas están listas
-visualmente pero todavía no tienen backend:
+La landing conserva su diseño editorial y suma un e-commerce local completo para validar la experiencia antes de conectar infraestructura:
 
-- **Reservas** — los CTA abren WhatsApp con el mensaje ya escrito. No hay
-  disponibilidad ni confirmación automática.
-- **Pedidos** (delivery / retiro / WhatsApp) — los tres caminos abren WhatsApp.
-  No hay carrito ni pasarela de pago.
-- **"Descargar menú completo"** — apunta a `#menu` hasta que exista el PDF; se
-  cambia en `menu.downloadHref`.
-- **Ubicación** — hay foto y link a Google Maps. Para embeber el mapa hace falta
-  la dirección exacta; el link ya está en `location.mapHref`.
+- carta comprable con variantes, cantidades y observaciones;
+- carrito persistente y checkout con delivery o retiro;
+- confirmación y seguimiento de estados;
+- panel en `/admin` para pedidos, catálogo, categorías y configuración (PIN demo: `2026`);
+- datos de demostración persistidos en `localStorage`.
+
+Esta persistencia es deliberadamente local: sirve para pruebas en un único navegador y no para producción ni datos personales reales. La separación `data/`, `repositories/` y `services/` permite conectar Supabase en la fase siguiente sin reescribir la UI. Ver `ARCHITECTURE.md`.

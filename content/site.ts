@@ -50,7 +50,7 @@ export const site: SiteContent = {
     subtitle: 'Pastas caseras, pizza a la piedra y parrilla.',
     tagline: 'Más que un plato, creamos experiencias únicas.',
     /* Pedir lidera, reservar acompaña — el mismo orden en toda la página. */
-    primaryCta: { label: 'Pedir ahora', href: '#pedir' },
+    primaryCta: { label: 'Pedir ahora', href: '#menu' },
     secondaryCta: { label: 'Reservar mesa', href: '#reservas' },
     metaLeft: 'Martes a domingo · 20:00 – 00:30',
     metaRight: 'Florida · Uruguay',
@@ -258,7 +258,7 @@ export const site: SiteContent = {
         name: 'Delivery',
         description: 'Llevamos La Toscana hasta tu casa, en Florida y alrededores.',
         cta: 'Pedir delivery',
-        href: whatsapp('¡Hola! Quiero hacer un pedido con delivery.'),
+        href: '#menu',
       },
       {
         id: 'retiro',
@@ -266,7 +266,7 @@ export const site: SiteContent = {
         name: 'Retiro',
         description: 'Pedí y pasá a buscarlo caliente por el restaurante, sin espera.',
         cta: 'Pedir para retirar',
-        href: whatsapp('¡Hola! Quiero hacer un pedido para retirar por el local.'),
+        href: '#menu',
       },
       {
         id: 'whatsapp',
@@ -396,7 +396,7 @@ export const site: SiteContent = {
     kicker: '¿Cenamos?',
     title: 'Descubrí momentos inolvidables',
     primaryCta: { label: 'Reservar', href: '#reservas' },
-    secondaryCta: { label: 'Pedir ahora', href: '#pedir' },
+    secondaryCta: { label: 'Pedir ahora', href: '#menu' },
   },
 
   footer: {

@@ -245,3 +245,5 @@
     color: var(--color-accent-200);
   }
 }
+.option { display: block; margin-top: 10px; color: var(--ink-light-soft); font-size: var(--fs-small); }
+.option select { display: block; width: 100%; min-height: 42px; margin-top: 4px; padding: 6px 10px; border: 1px solid var(--rule-light); background: var(--color-neutral-900); color: var(--ink-light); }
