@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import type { SiteContent } from '@/content'
 import styles from './Menu.module.css'
+import { useCart } from './CartProvider'
 
 /** Arrow keys move between tabs and Home/End jump to the ends, as a tablist
  *  is expected to behave — only the selected tab is in the tab order. */
@@ -28,6 +29,7 @@ function nextIndex(key: string, current: number, total: number): number | null {
  * the right. Built as a tablist so it works from the keyboard, not just a click.
  */
 export function Menu({ menu }: { menu: SiteContent['menu'] }) {
+  const cart = useCart()
   const [activeId, setActiveId] = useState(menu.categories[0]?.id)
   const active = menu.categories.find((category) => category.id === activeId) ?? menu.categories[0]
   const tabsRef = useRef<HTMLDivElement>(null)
@@ -95,6 +97,7 @@ export function Menu({ menu }: { menu: SiteContent['menu'] }) {
                   <span className={`${styles.itemPrice} tnum`}>{item.price}</span>
                 </div>
                 <div className={styles.itemDescription}>{item.description}</div>
+                <button type="button" className={styles.add} disabled={item.available === false} onClick={() => cart.add(item)}>{item.available === false ? 'No disponible' : 'Agregar al pedido'}</button>
               </div>
             ))}
           </div>

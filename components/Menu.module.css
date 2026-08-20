@@ -157,6 +157,8 @@
   color: var(--ink-light-soft);
   max-width: 46ch;
 }
+.add { margin-top: 10px; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-accent-700); background: transparent; color: var(--color-accent-300); font: 500 var(--fs-kicker) var(--font-body); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.add:disabled { opacity: .45; cursor: not-allowed; }
 
 .cardFoot {
   margin-top: clamp(20px, 4vw, 26px);

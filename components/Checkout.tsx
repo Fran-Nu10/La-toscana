@@ -1,0 +1,20 @@
+'use client'
+
+import { useState, type FormEvent } from 'react'
+import Link from 'next/link'
+import { useCart } from './CartProvider'
+import { formatUyu, type Fulfillment } from '@/lib/order'
+import styles from './Checkout.module.css'
+
+export function Checkout() {
+  const cart = useCart(); const [fulfillment, setFulfillment] = useState<Fulfillment>('pickup'); const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [order, setOrder] = useState<{ number: string; trackingToken: string } | null>(null)
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setBusy(true); setError(''); const form = new FormData(event.currentTarget)
+    const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: { name: form.get('name'), phone: form.get('phone'), email: form.get('email') || undefined }, fulfillment, address: form.get('address') || undefined, notes: form.get('notes') || undefined, items: cart.lines.map(line => ({ productId: line.productId, quantity: line.quantity, optionChoiceIds: line.selections.map(x => x.choiceId), notes: line.notes })) }) })
+    const result = await response.json(); setBusy(false)
+    if (!response.ok) return setError(result.error ?? 'No pudimos enviar el pedido.')
+    setOrder(result); cart.clear()
+  }
+  if (order) return <main className={styles.shell}><section className={styles.confirm}><p className="kicker">Pedido recibido</p><h1>¡Gracias!</h1><p>Tu pedido <strong>#{order.number}</strong> ya está en La Toscana.</p><Link className="btn btnPrimary" href={`/pedido/${order.trackingToken}`}>Ver estado del pedido</Link></section></main>
+  return <main className={styles.shell}><Link href="/#menu" className="ruleLink">← Volver a la carta</Link><h1>Finalizar pedido</h1>{!cart.lines.length ? <p>Tu carrito está vacío.</p> : <form onSubmit={submit}><section><h2>Datos de contacto</h2><label>Nombre completo<input required minLength={2} name="name" autoComplete="name" /></label><label>Teléfono<input required minLength={6} name="phone" inputMode="tel" autoComplete="tel" /></label><label>Email (opcional)<input name="email" type="email" autoComplete="email" /></label></section><section><h2>Entrega</h2><div className={styles.choice}><label><input type="radio" checked={fulfillment === 'pickup'} onChange={() => setFulfillment('pickup')} /> Retiro en el local</label><label><input type="radio" checked={fulfillment === 'delivery'} onChange={() => setFulfillment('delivery')} /> Delivery</label></div>{fulfillment === 'delivery' && <label>Dirección<input required name="address" autoComplete="street-address" /></label>}<label>Observaciones generales<textarea name="notes" maxLength={500} /></label></section><section><h2>Resumen</h2>{cart.lines.map(line => <div className={styles.summary} key={line.key}><span>{line.quantity} × {line.name}</span><span>{formatUyu(line.unitPriceCents * line.quantity)}</span></div>)}<div className={styles.total}><strong>Total</strong><strong>{formatUyu(cart.total)}</strong></div><p className={styles.hint}>El local confirmará el pedido y el tiempo estimado. Pago al recibir o retirar.</p>{error && <p role="alert" className={styles.error}>{error}</p>}<button className="btn btnPrimary" disabled={busy}>{busy ? 'Enviando…' : 'Confirmar pedido'}</button></section></form>}</main>
+}

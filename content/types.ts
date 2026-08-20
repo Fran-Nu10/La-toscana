@@ -40,9 +40,13 @@ export interface Dish {
 }
 
 export interface MenuItem {
+  id: string
   name: string
   price: string
+  priceCents: number
   description: string
+  available?: boolean
+  options?: { id: string; name: string; choices: { id: string; name: string; priceCents: number }[] }[]
 }
 
 export interface MenuCategory {
