@@ -1,0 +1,1398 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   Panel de La Toscana — sistema visual del admin.
+
+   La landing vende la experiencia gastronómica; el panel vende claridad
+   operativa. Comparte la paleta y la serif de marca del design system, pero
+   cambia tres cosas a propósito:
+
+   1. Tipografía de interfaz: una sans del sistema para labels, datos y forms.
+      La serif (Cormorant) queda sólo para la marca. Es la única forma de tener
+      densidad y legibilidad reales en tablas y formularios.
+   2. Escala tipográfica fija y contenida (11 → 24px). Nada de clamp() de
+      display: un título de 90px no tiene lugar en una herramienta.
+   3. Fondo marfil cálido en vez del gris de la web, y superficies blancas.
+
+   Todo lo demás — acento dorado, filetes de 1px, sobriedad — viene de la web.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.root {
+  /* — Superficies — */
+  --a-bg: #faf8f4;
+  --a-surface: #ffffff;
+  --a-surface-2: #f5f2ec;
+  --a-line: rgba(32, 31, 29, 0.11);
+  --a-line-strong: rgba(32, 31, 29, 0.2);
+
+  /* — Tinta — */
+  --a-ink: #201f1d;
+  --a-ink-2: #5f594f;
+  --a-ink-3: #8b8478;
+
+  /* — Acento — */
+  --a-accent: #b68235;
+  --a-accent-deep: #7d5411;
+  --a-accent-soft: rgba(182, 130, 53, 0.12);
+  --a-accent-line: rgba(182, 130, 53, 0.4);
+
+  /* — Tipografía de interfaz — */
+  --a-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --a-serif: var(--font-heading, Georgia, serif);
+
+  --a-11: 0.6875rem;
+  --a-12: 0.75rem;
+  --a-13: 0.8125rem;
+  --a-14: 0.875rem;
+  --a-15: 0.9375rem;
+  --a-16: 1rem;
+  --a-18: 1.125rem;
+  --a-20: 1.25rem;
+  --a-24: 1.5rem;
+
+  /* — Ritmo — */
+  --a-pad: clamp(16px, 4vw, 32px);
+  --a-gap: 12px;
+  --a-r: 10px;
+  --a-r-sm: 8px;
+  --a-tap: 44px;
+
+  --a-shadow: 0 1px 2px rgba(32, 31, 29, 0.05), 0 1px 3px rgba(32, 31, 29, 0.04);
+  --a-shadow-lift: 0 6px 24px rgba(32, 31, 29, 0.1);
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--a-bg);
+  color: var(--a-ink);
+  font-family: var(--a-sans);
+  font-size: var(--a-14);
+  line-height: 1.5;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+}
+
+.root :focus-visible {
+  outline: 2px solid var(--a-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Shell ───────────────────────────────────────────────────────────────── */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--a-bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--a-line);
+}
+
+.topbarInner {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding: 10px var(--a-pad);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-right: auto;
+  min-width: 0;
+}
+
+.brandMark {
+  font-family: var(--a-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--a-18);
+  line-height: 1;
+  color: var(--a-ink);
+  white-space: nowrap;
+}
+
+/* "Panel" junto a la marca: dice dónde estás sin gastar un título entero. */
+.brandTag {
+  font-size: var(--a-11);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+  white-space: nowrap;
+}
+
+.topbarActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Barra de secciones — scrollea en teléfono, sin barra visible. */
+.tabs {
+  border-bottom: 1px solid var(--a-line);
+  background: var(--a-bg);
+}
+
+.tabsInner {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: var(--a-pad);
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.tabsInner::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  position: relative;
+  scroll-snap-align: start;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: var(--a-tap);
+  padding: 0 14px;
+  background: transparent;
+  border: 0;
+  color: var(--a-ink-2);
+  font: 500 var(--a-14) / 1 var(--a-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.tab::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  background: var(--a-accent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.tabActive {
+  color: var(--a-ink);
+  font-weight: 600;
+}
+.tabActive::after {
+  opacity: 1;
+}
+
+/* Contador de pedidos nuevos sobre la pestaña. */
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--a-accent);
+  color: #fff;
+  font-size: var(--a-11);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.main {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding: clamp(20px, 4vw, 32px) var(--a-pad) clamp(48px, 10vw, 88px);
+}
+
+.pageHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-family: var(--a-sans);
+  font-size: var(--a-20);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--a-ink);
+  text-transform: none;
+}
+
+.pageSubtitle {
+  margin: 3px 0 0;
+  font-size: var(--a-13);
+  color: var(--a-ink-3);
+}
+
+/* ── Botones ─────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: var(--a-tap);
+  padding: 0 16px;
+  border-radius: var(--a-r-sm);
+  border: 1px solid var(--a-line-strong);
+  background: var(--a-surface);
+  color: var(--a-ink);
+  font: 500 var(--a-14) / 1 var(--a-sans);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    transform 0.12s ease;
+}
+.btn:active {
+  transform: scale(0.985);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: #fff;
+  font-weight: 600;
+}
+.btnPrimary:active {
+  background: #000;
+}
+
+.btnQuiet {
+  border-color: transparent;
+  background: transparent;
+  color: var(--a-ink-2);
+}
+
+.btnDanger {
+  border-color: rgba(150, 60, 50, 0.35);
+  color: #8c3a30;
+  background: transparent;
+}
+
+.btnSmall {
+  min-height: 38px;
+  padding: 0 12px;
+  font-size: var(--a-13);
+}
+
+.btnBlock {
+  width: 100%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    border-color: var(--a-ink-3);
+  }
+  .btnPrimary:hover {
+    background: #35322d;
+    border-color: #35322d;
+  }
+  .btnQuiet:hover {
+    background: rgba(32, 31, 29, 0.05);
+    color: var(--a-ink);
+  }
+  .btnDanger:hover {
+    background: rgba(150, 60, 50, 0.07);
+  }
+  .tab:hover {
+    color: var(--a-ink);
+  }
+}
+
+/* ── Superficies ─────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-r);
+  box-shadow: var(--a-shadow);
+}
+
+.cardPad {
+  padding: clamp(14px, 3vw, 20px);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px clamp(14px, 3vw, 20px);
+  border-bottom: 1px solid var(--a-line);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--a-15);
+  font-weight: 600;
+  color: var(--a-ink);
+}
+
+.cardNote {
+  margin: 2px 0 0;
+  font-size: var(--a-12);
+  color: var(--a-ink-3);
+}
+
+.stack {
+  display: grid;
+  gap: var(--a-gap);
+}
+
+/* ── Resumen operativo ───────────────────────────────────────────────────── */
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  padding: 12px 14px;
+  border-radius: var(--a-r);
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+}
+
+.statAlert {
+  border-color: var(--a-accent-line);
+  background: var(--a-accent-soft);
+}
+
+.statValue {
+  font-size: var(--a-20);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--a-ink);
+}
+
+.statLabel {
+  margin-top: 2px;
+  font-size: var(--a-12);
+  color: var(--a-ink-3);
+}
+
+/* ── Filtros ─────────────────────────────────────────────────────────────── */
+
+.filters {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-inline: var(--a-pad);
+  margin-inline: calc(var(--a-pad) * -1);
+  scroll-padding-inline: var(--a-pad);
+  scroll-snap-type: x proximity;
+}
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  scroll-snap-align: start;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 13px;
+  border-radius: 999px;
+  border: 1px solid var(--a-line-strong);
+  background: var(--a-surface);
+  color: var(--a-ink-2);
+  font: 500 var(--a-13) / 1 var(--a-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+.chipActive {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: #fff;
+}
+.chipCount {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.65;
+}
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    border-color: var(--a-ink-3);
+    color: var(--a-ink);
+  }
+  .chipActive:hover {
+    color: #fff;
+  }
+}
+
+/* ── Estados de pedido ───────────────────────────────────────────────────── */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  font-size: var(--a-12);
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+/* Paleta de estado apagada a propósito: legible de un vistazo, nunca chillona. */
+.stPending {
+  background: rgba(182, 130, 53, 0.16);
+  color: #7d5411;
+}
+.stConfirmed {
+  background: rgba(70, 95, 120, 0.13);
+  color: #3d556b;
+}
+.stPreparing {
+  background: rgba(176, 98, 52, 0.14);
+  color: #8a4a22;
+}
+.stReady {
+  background: rgba(94, 116, 60, 0.16);
+  color: #495c2c;
+}
+.stDelivering {
+  background: rgba(58, 110, 110, 0.14);
+  color: #2f5b5b;
+}
+.stCompleted {
+  background: rgba(32, 31, 29, 0.07);
+  color: var(--a-ink-2);
+}
+.stCancelled {
+  background: rgba(150, 60, 50, 0.12);
+  color: #8c3a30;
+}
+
+/* ── Lista de pedidos ────────────────────────────────────────────────────── */
+
+.orders {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.order {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-r);
+  box-shadow: var(--a-shadow);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Los pedidos nuevos son lo único que grita, y grita bajito. */
+.orderNew {
+  border-color: var(--a-accent-line);
+  box-shadow: inset 3px 0 0 var(--a-accent), var(--a-shadow);
+}
+
+/* Apilado: número y estado, después quién, después cómo llega. */
+.orderTop {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.orderId {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.orderNumber {
+  font-size: var(--a-15);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--a-ink);
+}
+
+.orderTime {
+  font-size: var(--a-12);
+  color: var(--a-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.orderCustomer {
+  font-size: var(--a-15);
+  font-weight: 600;
+  color: var(--a-ink);
+  margin: 0;
+}
+
+.orderMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 3px 0 0;
+  font-size: var(--a-13);
+  color: var(--a-ink-2);
+}
+
+/* Tocar para llamar al cliente es una acción real del servicio, así que el
+   área táctil se agranda con padding y se compensa con margen negativo: 39px
+   de alto para el dedo, sin mover ni un píxel la línea. */
+.orderMeta a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 39px;
+  margin-block: -9px;
+  color: var(--a-ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--a-line-strong);
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--a-ink-3);
+  flex: none;
+}
+
+.orderTotal {
+  font-size: var(--a-16);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Total, cambio de estado y detalle en una sola línea, incluso a 360px. */
+.orderActions {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding-top: 11px;
+  border-top: 1px solid var(--a-line);
+}
+
+/* Algo más bajo que un campo de formulario, pero sin bajar del tamaño de
+   fuente que evita el zoom automático de iOS al enfocar. */
+.orderActions .select {
+  min-height: 40px;
+  padding-block: 8px;
+  padding-inline: 10px 28px;
+  background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+}
+
+/* ── Formularios ─────────────────────────────────────────────────────────── */
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--a-12);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--a-ink-2);
+}
+
+.hint {
+  font-size: var(--a-12);
+  color: var(--a-ink-3);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  min-height: var(--a-tap);
+  padding: 10px 12px;
+  border: 1px solid var(--a-line-strong);
+  border-radius: var(--a-r-sm);
+  background: var(--a-surface);
+  color: var(--a-ink);
+  font: 400 var(--a-14) / 1.4 var(--a-sans);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  /* 16px en foco evitaría el zoom de iOS; en su lugar el input ya es 14px con
+     alto cómodo y iOS sólo hace zoom por debajo de 16 — se fuerza abajo. */
+}
+
+.textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.select {
+  appearance: none;
+  padding-right: 34px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--a-ink-2) 50%),
+    linear-gradient(135deg, var(--a-ink-2) 50%, transparent 50%);
+  background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--a-accent);
+  box-shadow: 0 0 0 3px var(--a-accent-soft);
+}
+
+.inputPrefix {
+  position: relative;
+}
+.inputPrefix > span {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--a-14);
+  color: var(--a-ink-3);
+  pointer-events: none;
+}
+.inputPrefix > .input {
+  padding-left: 32px;
+  font-variant-numeric: tabular-nums;
+}
+
+.grid2 {
+  display: grid;
+  gap: var(--a-gap);
+}
+
+/* ── Interruptor ─────────────────────────────────────────────────────────── */
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: var(--a-tap);
+  cursor: pointer;
+}
+
+.switchText {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.switchLabel {
+  font-size: var(--a-14);
+  font-weight: 500;
+  color: var(--a-ink);
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 27px;
+  border-radius: 999px;
+  background: rgba(32, 31, 29, 0.16);
+  transition: background-color 0.22s ease;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.22s var(--ease, ease);
+}
+.switchOn {
+  background: var(--a-accent);
+}
+.switchOn::after {
+  transform: translateX(19px);
+}
+.switchInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switchInput:focus-visible + .switch {
+  outline: 2px solid var(--a-accent);
+  outline-offset: 2px;
+}
+
+/* ── Filas de lista (productos, categorías) ──────────────────────────────── */
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-r);
+  box-shadow: var(--a-shadow);
+}
+
+.rowMain {
+  min-width: 0;
+  flex: 1;
+}
+
+.rowTitle {
+  font-size: var(--a-15);
+  font-weight: 600;
+  color: var(--a-ink);
+  overflow-wrap: anywhere;
+}
+
+.rowMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+  font-size: var(--a-12);
+  color: var(--a-ink-3);
+}
+
+.rowPrice {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--a-ink-2);
+}
+
+.rowActions {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+
+/* Fila de categoría: en teléfono los controles bajan y se separan con un
+   filete; desde 620px entran en la misma línea que el nombre. */
+.categoryRow {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.categoryControls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px solid var(--a-line);
+}
+
+.categoryControls .switchRow {
+  min-height: 40px;
+  gap: 10px;
+}
+
+@media (min-width: 620px) {
+  .categoryRow {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .categoryControls {
+    width: auto;
+    flex: none;
+    padding-top: 0;
+    border-top: 0;
+    gap: 18px;
+  }
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--a-surface-2);
+  color: var(--a-ink-2);
+  font-size: var(--a-11);
+  font-weight: 600;
+}
+.tagOff {
+  background: rgba(150, 60, 50, 0.1);
+  color: #8c3a30;
+}
+
+/* ── Toolbar (búsqueda + acción) ─────────────────────────────────────────── */
+
+.toolbar {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.search {
+  position: relative;
+}
+.search > .input {
+  padding-left: 34px;
+}
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--a-ink-3);
+  pointer-events: none;
+  display: flex;
+}
+
+/* ── Estados vacíos ──────────────────────────────────────────────────────── */
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: clamp(32px, 9vw, 56px) 24px;
+  text-align: center;
+  background: var(--a-surface);
+  border: 1px dashed var(--a-line-strong);
+  border-radius: var(--a-r);
+}
+
+.emptyMark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--a-surface-2);
+  color: var(--a-ink-3);
+}
+
+.emptyTitle {
+  font-size: var(--a-15);
+  font-weight: 600;
+  color: var(--a-ink);
+}
+
+.emptyText {
+  margin: 0;
+  max-width: 40ch;
+  font-size: var(--a-13);
+  color: var(--a-ink-3);
+}
+
+/* ── Editor de producto ──────────────────────────────────────────────────── */
+
+.fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--a-gap);
+}
+
+.legend {
+  padding: 0;
+  font-size: var(--a-12);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+
+.option {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  background: var(--a-surface-2);
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-r-sm);
+}
+
+.optionHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Alta de categoría: apilada en teléfono para que el campo tenga el ancho
+   completo y el placeholder no quede cortado. */
+.addRow {
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .addRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.choice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 108px auto;
+  gap: 8px;
+  align-items: center;
+}
+
+/* A 390px las tres columnas dejan el nombre de la variante ilegible: pasa a
+   ocupar la línea entera y debajo quedan el adicional y el botón de quitar. */
+@media (max-width: 520px) {
+  .choice {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .choice > *:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.iconBtn {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--a-r-sm);
+  border: 1px solid var(--a-line-strong);
+  background: var(--a-surface);
+  color: var(--a-ink-2);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .iconBtn:hover {
+    background: rgba(150, 60, 50, 0.08);
+    border-color: rgba(150, 60, 50, 0.3);
+    color: #8c3a30;
+  }
+}
+
+/* Barra de acciones pegada al fondo: guardar siempre a mano en el teléfono. */
+.saveBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  margin: 4px calc(var(--a-pad) * -1) calc(var(--a-pad) * -1);
+  padding: 12px var(--a-pad) calc(12px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--a-bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--a-line);
+}
+.saveBar > * {
+  flex: 1;
+}
+
+/* ── Detalle de pedido ───────────────────────────────────────────────────── */
+
+.sheetBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(24, 21, 18, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fade 0.2s ease;
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  max-height: 92dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--a-bg);
+  border-radius: 16px 16px 0 0;
+  box-shadow: var(--a-shadow-lift);
+  animation: rise 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rise {
+  from {
+    transform: translateY(4%);
+  }
+}
+
+.sheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px var(--a-pad);
+  border-bottom: 1px solid var(--a-line);
+  background: var(--a-surface);
+}
+
+.sheetTitle {
+  margin: 0;
+  font-size: var(--a-16);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.sheetBody {
+  overflow-y: auto;
+  padding: 16px var(--a-pad) calc(24px + env(safe-area-inset-bottom));
+  display: grid;
+  gap: 14px;
+}
+
+.detailGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.detailPair {
+  display: grid;
+  gap: 2px;
+}
+
+.detailKey {
+  font-size: var(--a-11);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+
+.detailValue {
+  font-size: var(--a-14);
+  color: var(--a-ink);
+  overflow-wrap: anywhere;
+}
+.detailValue a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 39px;
+  margin-block: -9px;
+  color: var(--a-accent-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--a-accent-line);
+}
+
+.lineItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--a-line);
+}
+.lineItem:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.lineName {
+  font-size: var(--a-14);
+  font-weight: 600;
+}
+
+.lineTotal {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+
+.lineChoices {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+  font-size: var(--a-12);
+  color: var(--a-ink-2);
+}
+
+.lineNote {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: var(--a-accent-soft);
+  font-size: var(--a-12);
+  color: var(--a-accent-deep);
+}
+
+.totals {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--a-line-strong);
+}
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: var(--a-13);
+  color: var(--a-ink-2);
+}
+.totalRow dt,
+.totalRow dd {
+  margin: 0;
+}
+.totalRow dd {
+  font-variant-numeric: tabular-nums;
+}
+.totalGrand {
+  padding-top: 6px;
+  border-top: 1px solid var(--a-line);
+  font-size: var(--a-16);
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+/* ── Aviso de guardado ───────────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 95;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: var(--a-ink);
+  color: #fff;
+  font-size: var(--a-13);
+  font-weight: 500;
+  box-shadow: var(--a-shadow-lift);
+  animation: toastIn 0.24s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+/* ── Zona peligrosa ──────────────────────────────────────────────────────── */
+
+.danger {
+  border-color: rgba(150, 60, 50, 0.25);
+}
+
+/* ── Acceso ──────────────────────────────────────────────────────────────── */
+
+.login {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px var(--a-pad);
+  background: var(--a-bg);
+}
+
+.loginCard {
+  width: min(400px, 100%);
+  display: grid;
+  gap: 16px;
+  padding: clamp(24px, 6vw, 34px);
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  border-radius: 14px;
+  box-shadow: var(--a-shadow);
+}
+
+.loginBrand {
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.loginMark {
+  font-family: var(--a-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--a-24);
+  line-height: 1.1;
+  color: var(--a-ink);
+}
+
+.loginTitle {
+  margin: 0;
+  font-size: var(--a-13);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+
+.loginForm {
+  display: grid;
+  gap: 12px;
+}
+
+/* El PIN de la demo se muestra a propósito, pero como nota discreta. */
+.loginDemo {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--a-r-sm);
+  background: var(--a-surface-2);
+  font-size: var(--a-12);
+  color: var(--a-ink-2);
+  text-align: center;
+}
+.loginDemo b {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  color: var(--a-ink);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--a-13);
+  color: #8c3a30;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  min-height: 40px;
+  font-size: var(--a-13);
+  color: var(--a-ink-3);
+  text-decoration: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Puntos de quiebre — el panel se piensa a 390px y crece desde ahí.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Los inputs pasan a 16px sólo en pantallas táctiles chicas, donde iOS hace
+   zoom automático por debajo de ese tamaño. */
+@media (max-width: 600px) {
+  .input,
+  .select,
+  .textarea {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 560px) {
+  .summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+  }
+  .grid2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .saveBar {
+    justify-content: flex-end;
+  }
+  .saveBar > * {
+    flex: 0 0 auto;
+    min-width: 150px;
+  }
+}
+
+/* El detalle deja de ser hoja inferior y pasa a diálogo centrado. */
+@media (min-width: 700px) {
+  .sheetBackdrop {
+    align-items: center;
+    padding: 24px;
+  }
+  .sheet {
+    width: min(660px, 100%);
+    max-height: 86dvh;
+    border-radius: 14px;
+  }
+}
+
+/* Fila de pedido en una sola línea: más densidad, menos scroll. */
+@media (min-width: 860px) {
+  .order {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+  }
+  .orderTop {
+    display: grid;
+    gap: 2px;
+  }
+  .orderActions {
+    padding-top: 0;
+    border-top: 0;
+    grid-template-columns: auto auto auto;
+    gap: 10px;
+  }
+  .orderTotalCell {
+    text-align: right;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main {
+    padding-top: 32px;
+  }
+}

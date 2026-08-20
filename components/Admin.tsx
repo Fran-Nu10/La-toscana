@@ -1,26 +1,109 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { useCommerce } from './CommerceProvider'
-import type { Category, Product, ProductOption, Order, OrderStatus } from '@/data/types'
-import { formatUyu } from '@/lib/order'
-import styles from './Admin.module.css'
-const statuses:OrderStatus[]=['pending','confirmed','preparing','ready','delivering','completed','cancelled']
-const statusLabels:Record<OrderStatus,string>={pending:'Nuevo',confirmed:'Confirmado',preparing:'Preparando',ready:'Listo',delivering:'En camino',completed:'Finalizado',cancelled:'Cancelado'}
-type OrderFilter='all'|'pending'|'confirmed'|'preparing'|'ready'|'finished'
-const slug=(value:string)=>value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
-export function Admin(){const commerce=useCommerce();const [authenticated,setAuthenticated]=useState(()=>typeof window!=='undefined'&&sessionStorage.getItem('lt-admin-demo')==='ok');const [tab,setTab]=useState<'orders'|'products'|'categories'|'settings'>('orders');const [editing,setEditing]=useState<Product|null>(null);const [selectedOrder,setSelectedOrder]=useState<Order|null>(null);const [error,setError]=useState('');const [orderFilter,setOrderFilter]=useState<OrderFilter>('all')
-  function login(event:FormEvent<HTMLFormElement>){event.preventDefault();const pin=String(new FormData(event.currentTarget).get('pin'));if(pin!== '2026')return setError('PIN incorrecto.');sessionStorage.setItem('lt-admin-demo','ok');setAuthenticated(true)}
-  if(!authenticated)return <main className={styles.login}><p className="kicker">Demo local</p><h1>Administración</h1><p>Ingresá el PIN de demostración: <strong>2026</strong></p><form onSubmit={login}><label>PIN<input name="pin" type="password" inputMode="numeric" required/></label><button className="btn btnPrimary">Ingresar</button>{error&&<p role="alert">{error}</p>}</form></main>
-  const draft=editing??{id:'',categoryId:commerce.categories[0]?.id??'',name:'',description:'',priceCents:0,available:true,options:[]}
-  function saveProduct(event:FormEvent<HTMLFormElement>){event.preventDefault();const form=new FormData(event.currentTarget);commerce.saveProduct({...draft,id:draft.id||`${slug(String(form.get('name')))}-${Date.now()}`,categoryId:String(form.get('categoryId')),name:String(form.get('name')).trim(),description:String(form.get('description')).trim(),priceCents:Math.round(Number(form.get('price'))*100),available:form.get('available')==='on'});setEditing(null)}
-  function addOption(){setEditing({...draft,options:[...draft.options,{id:`option-${Date.now()}`,name:'Nueva opción',required:false,choices:[]}]})}
-  function updateOption(index:number,option:ProductOption){setEditing({...draft,options:draft.options.map((item,i)=>i===index?option:item)})}
-  return <main className={styles.shell}><header><div><p className="kicker">Demo local</p><h1>Administración</h1></div><button className="ruleLink" onClick={()=>{sessionStorage.removeItem('lt-admin-demo');setAuthenticated(false)}}>Salir</button></header><nav>{(['orders','products','categories','settings'] as const).map(item=><button className={tab===item?styles.active:''} onClick={()=>{setTab(item);setEditing(null)}} key={item}>{({orders:'Pedidos',products:'Productos',categories:'Categorías',settings:'Negocio'})[item]}</button>)}</nav>
-  {tab==='orders'&&<section><div className={styles.sectionHead}><h2>Pedidos</h2><span>{commerce.orders.filter(order=>order.status==='pending').length} nuevos</span></div><div className={styles.filters}>{([['all','Todos'],['pending','Nuevos'],['confirmed','Confirmados'],['preparing','Preparando'],['ready','Listos'],['finished','Finalizados']] as [OrderFilter,string][]).map(([value,label])=><button type="button" className={orderFilter===value?styles.filterActive:''} onClick={()=>setOrderFilter(value)} key={value}>{label}</button>)}</div>{!commerce.orders.length&&<p>Todavía no hay pedidos. Creá uno desde la carta para probar el circuito.</p>}{commerce.orders.filter(order=>orderFilter==='all'||order.status===orderFilter||(orderFilter==='finished'&&['completed','cancelled'].includes(order.status))).map(order=><article className={`${styles.card} ${order.status==='pending'?styles.newOrder:''}`} key={order.id}><div><strong>#{order.number} · {order.customer.name} {order.status==='pending'&&<span className={styles.newBadge}>Nuevo</span>}</strong><p>{order.customer.phone} · {order.fulfillment==='delivery'?'Delivery':'Retiro'} · {formatUyu(order.totalCents)}</p><small>{new Date(order.createdAt).toLocaleString('es-UY')}</small></div><div><button type="button" onClick={()=>setSelectedOrder(order)}>Ver detalle</button><label>Estado<select value={order.status} aria-label={`Estado del pedido ${order.number}`} onChange={event=>commerce.updateOrderStatus(order.id,event.target.value as OrderStatus)}>{statuses.map(status=><option key={status} value={status}>{statusLabels[status]}</option>)}</select></label></div></article>)}{selectedOrder&&<OrderDetail order={commerce.orders.find(order=>order.id===selectedOrder.id)??selectedOrder} close={()=>setSelectedOrder(null)}/>}</section>}
-  {tab==='products'&&<section><div className={styles.sectionHead}><h2>Productos</h2><button className="btn" onClick={()=>setEditing(draft)}>Nuevo producto</button></div>{editing?<form className={styles.editor} onSubmit={saveProduct}><label>Nombre<input name="name" defaultValue={draft.name} required/></label><label>Descripción<textarea name="description" defaultValue={draft.description}/></label><label>Categoría<select name="categoryId" defaultValue={draft.categoryId}>{commerce.categories.map(category=><option value={category.id} key={category.id}>{category.name}</option>)}</select></label><label>Precio ($U)<input name="price" type="number" min="0" step="1" defaultValue={draft.priceCents/100} required/></label><label className={styles.check}><input name="available" type="checkbox" defaultChecked={draft.available}/> Disponible</label><h3>Opciones y variantes</h3>{draft.options.map((option,index)=><div className={styles.optionEditor} key={option.id}><input aria-label="Nombre de opción" value={option.name} onChange={event=>updateOption(index,{...option,name:event.target.value})}/><label className={styles.check}><input type="checkbox" checked={option.required} onChange={event=>updateOption(index,{...option,required:event.target.checked})}/> Obligatoria</label>{option.choices.map((choice,choiceIndex)=><div className={styles.choice} key={choice.id}><input aria-label="Nombre de variante" value={choice.name} onChange={event=>updateOption(index,{...option,choices:option.choices.map((item,i)=>i===choiceIndex?{...item,name:event.target.value}:item)})}/><input aria-label="Adicional en pesos" type="number" value={choice.priceDeltaCents/100} onChange={event=>updateOption(index,{...option,choices:option.choices.map((item,i)=>i===choiceIndex?{...item,priceDeltaCents:Number(event.target.value)*100}:item)})}/><button type="button" onClick={()=>updateOption(index,{...option,choices:option.choices.filter((_,i)=>i!==choiceIndex)})}>Quitar</button></div>)}<button type="button" onClick={()=>updateOption(index,{...option,choices:[...option.choices,{id:`choice-${Date.now()}`,name:'Nueva variante',priceDeltaCents:0,available:true}]})}>Agregar variante</button></div>)}<button type="button" onClick={addOption}>Agregar opción</button><div className={styles.actions}><button type="button" onClick={()=>setEditing(null)}>Cancelar</button><button className="btn btnPrimary">Guardar producto</button></div></form>:commerce.products.map(product=><article className={styles.card} key={product.id}><div><strong>{product.name}</strong><p>{formatUyu(product.priceCents)} · {product.available?'Disponible':'Oculto'} · {product.options.length} opciones</p></div><div><button onClick={()=>setEditing(product)}>Editar</button><button onClick={()=>confirm(`¿Eliminar ${product.name}?`)&&commerce.deleteProduct(product.id)}>Eliminar</button></div></article>)}</section>}
-  {tab==='categories'&&<section><h2>Categorías</h2>{commerce.categories.map(category=><CategoryRow key={category.id} category={category} save={commerce.saveCategory} remove={()=>confirm(`¿Eliminar ${category.name} y sus productos?`)&&commerce.deleteCategory(category.id)}/>) }<CategoryRow save={commerce.saveCategory}/></section>}
-  {tab==='settings'&&<section><h2>Datos del negocio</h2><form className={styles.editor} onSubmit={event=>{event.preventDefault();const form=new FormData(event.currentTarget);commerce.saveSettings({name:String(form.get('name')),phone:String(form.get('phone')),address:String(form.get('address')),orderHours:String(form.get('hours')),orderingOpen:form.get('open')==='on',deliveryEnabled:form.get('delivery')==='on',pickupEnabled:form.get('pickup')==='on',deliveryFeeCents:Number(form.get('fee'))*100,deliveryMinimumCents:Number(form.get('minimum'))*100})}}><label>Nombre<input name="name" defaultValue={commerce.settings.name}/></label><label>Teléfono<input name="phone" defaultValue={commerce.settings.phone}/></label><label>Dirección<input name="address" defaultValue={commerce.settings.address}/></label><label>Horario de pedidos<input name="hours" defaultValue={commerce.settings.orderHours}/></label><label className={styles.check}><input name="open" type="checkbox" defaultChecked={commerce.settings.orderingOpen}/> Pedidos abiertos</label><label className={styles.check}><input name="delivery" type="checkbox" defaultChecked={commerce.settings.deliveryEnabled}/> Delivery habilitado</label><label className={styles.check}><input name="pickup" type="checkbox" defaultChecked={commerce.settings.pickupEnabled}/> Retiro habilitado</label><label>Costo delivery ($U)<input name="fee" type="number" defaultValue={commerce.settings.deliveryFeeCents/100}/></label><label>Mínimo delivery ($U)<input name="minimum" type="number" defaultValue={commerce.settings.deliveryMinimumCents/100}/></label><button className="btn btnPrimary">Guardar configuración</button></form><button onClick={()=>confirm('¿Restaurar todos los datos demo?')&&commerce.resetDemo()}>Restaurar datos demo</button></section>}</main>}
-function CategoryRow({category,save,remove}:{category?:Category;save:(category:Category)=>void;remove?:()=>void}){const [name,setName]=useState(category?.name??'');return <div className={styles.categoryRow}><input aria-label="Nombre de categoría" placeholder="Nueva categoría" value={name} onChange={event=>setName(event.target.value)}/>{category&&<label className={styles.check}><input type="checkbox" checked={category.available} onChange={event=>save({...category,available:event.target.checked})}/> Visible</label>}<button disabled={!name.trim()} onClick={()=>{save({id:category?.id??`${slug(name)}-${Date.now()}`,name:name.trim(),available:category?.available??true});if(!category)setName('')}}>{category?'Guardar':'Agregar'}</button>{remove&&<button onClick={remove}>Eliminar</button>}</div>}
+import { AdminLogin } from './admin/AdminLogin'
+import { CategoriesPanel } from './admin/CategoriesPanel'
+import { OrdersPanel } from './admin/OrdersPanel'
+import { ProductsPanel } from './admin/ProductsPanel'
+import { SettingsPanel } from './admin/SettingsPanel'
+import { Icons } from './admin/ui'
+import styles from './admin/admin.module.css'
 
-function OrderDetail({order,close}:{order:Order;close:()=>void}){return <div className={styles.detailBackdrop} role="presentation" onClick={close}><section className={styles.detail} role="dialog" aria-modal="true" aria-labelledby="order-detail-title" onClick={event=>event.stopPropagation()}><button type="button" className={styles.detailClose} onClick={close} aria-label="Cerrar detalle">×</button><h2 id="order-detail-title">Pedido #{order.number}</h2><p><strong>Estado:</strong> {statusLabels[order.status]}</p><p><strong>Cliente:</strong> {order.customer.name} · {order.customer.phone}</p><p><strong>Entrega:</strong> {order.fulfillment==='delivery'?'Delivery':'Retiro en el local'}</p>{order.fulfillment==='delivery'&&<p><strong>Dirección:</strong> {order.address}</p>}<h3>Productos</h3>{order.items.map((item,index)=><article className={styles.detailItem} key={`${item.productId}-${index}`}><strong>{item.quantity} × {item.productName}</strong>{item.choices.length>0&&<ul>{item.choices.map(choice=><li key={`${choice.optionId}-${choice.choiceId}`}>{choice.optionName}: {choice.choiceName}{choice.priceDeltaCents?` (+${formatUyu(choice.priceDeltaCents)})`:''}</li>)}</ul>}<p><strong>Observaciones:</strong> {item.notes||'Sin observaciones'}</p><span>{formatUyu(item.lineTotalCents)}</span></article>)}<p><strong>Observaciones generales:</strong> {order.notes||'Sin observaciones'}</p><dl className={styles.totals}><div><dt>Subtotal</dt><dd>{formatUyu(order.subtotalCents)}</dd></div><div><dt>Costo de delivery</dt><dd>{formatUyu(order.deliveryFeeCents)}</dd></div><div><dt>Total</dt><dd><strong>{formatUyu(order.totalCents)}</strong></dd></div></dl></section></div>}
+type Tab = 'orders' | 'products' | 'categories' | 'settings'
+
+const TABS: [Tab, string][] = [
+  ['orders', 'Pedidos'],
+  ['products', 'Productos'],
+  ['categories', 'Categorías'],
+  ['settings', 'Negocio'],
+]
+
+export function Admin() {
+  const commerce = useCommerce()
+  const [tab, setTab] = useState<Tab>('orders')
+  const [toast, setToast] = useState('')
+
+  /* La sesión se lee después de montar, no durante el render: leerla en el
+     primer render daba distinto en el servidor que en el cliente y rompía la
+     hidratación (React #418). `checked` evita además el parpadeo del login. */
+  const [authenticated, setAuthenticated] = useState(false)
+  const [checked, setChecked] = useState(false)
+  useEffect(() => {
+    setAuthenticated(sessionStorage.getItem('lt-admin-demo') === 'ok')
+    setChecked(true)
+  }, [])
+
+  useEffect(() => {
+    if (!toast) return
+    const timer = window.setTimeout(() => setToast(''), 2200)
+    return () => window.clearTimeout(timer)
+  }, [toast])
+
+  if (!checked) return <div className={styles.root} />
+  if (!authenticated) return <AdminLogin onEnter={() => setAuthenticated(true)} />
+
+  const pending = commerce.orders.filter((order) => order.status === 'pending').length
+
+  return (
+    <div className={styles.root}>
+      <header className={styles.topbar}>
+        <div className={styles.topbarInner}>
+          <div className={styles.brand}>
+            <span className={styles.brandMark}>La Toscana</span>
+            <span className={styles.brandTag}>Panel</span>
+          </div>
+          <div className={styles.topbarActions}>
+            <a className={`${styles.btn} ${styles.btnQuiet} ${styles.btnSmall}`} href="/">
+              Ver el sitio
+            </a>
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnSmall}`}
+              onClick={() => {
+                sessionStorage.removeItem('lt-admin-demo')
+                setAuthenticated(false)
+              }}
+            >
+              Salir
+            </button>
+          </div>
+        </div>
+
+        <nav className={styles.tabs} aria-label="Secciones del panel">
+          <div className={styles.tabsInner}>
+            {TABS.map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={`${styles.tab} ${tab === value ? styles.tabActive : ''}`}
+                aria-current={tab === value ? 'page' : undefined}
+                onClick={() => setTab(value)}
+              >
+                {label}
+                {value === 'orders' && pending > 0 && (
+                  <span className={styles.tabCount}>{pending}</span>
+                )}
+              </button>
+            ))}
+          </div>
+        </nav>
+      </header>
+
+      <main className={styles.main}>
+        {tab === 'orders' && <OrdersPanel />}
+        {tab === 'products' && <ProductsPanel onSaved={setToast} />}
+        {tab === 'categories' && <CategoriesPanel onSaved={setToast} />}
+        {tab === 'settings' && <SettingsPanel onSaved={setToast} />}
+      </main>
+
+      {/* El panel anterior no daba ninguna señal al guardar. */}
+      {toast && (
+        <output className={styles.toast}>
+          {Icons.check}
+          {toast}
+        </output>
+      )}
+    </div>
+  )
+}

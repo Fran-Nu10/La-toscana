@@ -184,6 +184,9 @@ La landing conserva su diseño editorial y suma un e-commerce local completo par
 - carrito persistente y checkout con delivery o retiro;
 - confirmación y seguimiento de estados;
 - panel en `/admin` para pedidos, catálogo, categorías y configuración (PIN demo: `2026`);
+  usa su propio sistema visual (`components/admin/admin.module.css`): misma paleta
+  y serif de marca que la web, pero sans de interfaz, escala tipográfica fija y
+  densidad de herramienta en vez de la escala editorial de la landing;
 - datos de demostración persistidos en `localStorage`.
 
 Esta persistencia es deliberadamente local: sirve para pruebas en un único navegador y no para producción ni datos personales reales. La separación `data/`, `repositories/` y `services/` permite conectar Supabase en la fase siguiente sin reescribir la UI. Ver `ARCHITECTURE.md`.
