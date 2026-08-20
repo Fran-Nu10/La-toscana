@@ -34,7 +34,7 @@ export default async function HomePage() {
       <Header
         brand={site.brand.name}
         nav={site.nav}
-        order={{ label: 'Pedir', href: '#pedir' }}
+        order={{ label: 'Pedir', href: '#menu' }}
         reserve={{ label: 'Reservar', href: '#reservas' }}
         contact={{
           hours: site.brand.hours,

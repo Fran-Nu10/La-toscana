@@ -50,7 +50,7 @@ export const site: SiteContent = {
     subtitle: 'Pastas caseras, pizza a la piedra y parrilla.',
     tagline: 'Más que un plato, creamos experiencias únicas.',
     /* Pedir lidera, reservar acompaña — el mismo orden en toda la página. */
-    primaryCta: { label: 'Pedir ahora', href: '#pedir' },
+    primaryCta: { label: 'Pedir ahora', href: '#menu' },
     secondaryCta: { label: 'Reservar mesa', href: '#reservas' },
     metaLeft: 'Martes a domingo · 20:00 – 00:30',
     metaRight: 'Florida · Uruguay',
@@ -175,17 +175,21 @@ export const site: SiteContent = {
         name: 'Pastas',
         items: [
           {
+            id: 'sorrentinos-jyq',
             name: 'Sorrentinos de jamón y queso',
             price: '$U 590',
+            priceCents: 59000,
             description: 'Hechos en casa, salsa a elección',
           },
           {
+            id: 'tallarines-toscana',
             name: 'Tallarines a la Toscana',
             price: '$U 540',
+            priceCents: 54000,
             description: 'Crema, panceta y champiñones',
           },
-          { name: 'Ñoquis de papa', price: '$U 520', description: 'Bolognesa o cuatro quesos' },
-          { name: 'Lasaña de carne', price: '$U 620', description: 'Gratinada al horno' },
+          { id: 'noquis-papa', name: 'Ñoquis de papa', price: '$U 520', priceCents: 52000, description: 'Bolognesa o cuatro quesos' },
+          { id: 'lasana-carne', name: 'Lasaña de carne', price: '$U 620', priceCents: 62000, description: 'Gratinada al horno' },
         ],
       },
       {
@@ -193,14 +197,18 @@ export const site: SiteContent = {
         name: 'Pizzas',
         items: [
           {
+            id: 'muzzarella-piedra',
             name: 'Muzzarella a la piedra',
             price: '$U 430',
+            priceCents: 43000,
             description: 'Salsa de tomate y aceitunas',
           },
-          { name: 'Napolitana', price: '$U 480', description: 'Tomate fresco, ajo y albahaca' },
+          { id: 'napolitana', name: 'Napolitana', price: '$U 480', priceCents: 48000, description: 'Tomate fresco, ajo y albahaca' },
           {
+            id: 'toscana-especial',
             name: 'Toscana especial',
             price: '$U 560',
+            priceCents: 56000,
             description: 'Jamón crudo, rúcula y parmesano',
           },
         ],
@@ -209,32 +217,32 @@ export const site: SiteContent = {
         id: 'carnes',
         name: 'Carnes',
         items: [
-          { name: 'Entrecot a la parrilla', price: '$U 780', description: 'Con papas rústicas' },
-          { name: 'Pollo al champiñón', price: '$U 620', description: 'Suprema con salsa cremosa' },
+          { id: 'entrecot-parrilla', name: 'Entrecot a la parrilla', price: '$U 780', priceCents: 78000, description: 'Con papas rústicas' },
+          { id: 'pollo-champinon', name: 'Pollo al champiñón', price: '$U 620', priceCents: 62000, description: 'Suprema con salsa cremosa' },
         ],
       },
       {
         id: 'picadas',
         name: 'Picadas',
         items: [
-          { name: 'Picada para dos', price: '$U 890', description: 'Fiambres, quesos y frituras' },
-          { name: 'Tabla de mar', price: '$U 980', description: 'Rabas, langostinos y limón' },
+          { id: 'picada-dos', name: 'Picada para dos', price: '$U 890', priceCents: 89000, description: 'Fiambres, quesos y frituras' },
+          { id: 'tabla-mar', name: 'Tabla de mar', price: '$U 980', priceCents: 98000, description: 'Rabas, langostinos y limón' },
         ],
       },
       {
         id: 'postres',
         name: 'Postres',
         items: [
-          { name: 'Tiramisú', price: '$U 320', description: 'Receta clásica de la casa' },
-          { name: 'Flan casero', price: '$U 260', description: 'Con dulce de leche' },
+          { id: 'tiramisu', name: 'Tiramisú', price: '$U 320', priceCents: 32000, description: 'Receta clásica de la casa' },
+          { id: 'flan-casero', name: 'Flan casero', price: '$U 260', priceCents: 26000, description: 'Con dulce de leche' },
         ],
       },
       {
         id: 'vinos',
         name: 'Vinos',
         items: [
-          { name: 'Tannat Reserva', price: '$U 380', description: 'Copa o botella' },
-          { name: 'Chardonnay', price: '$U 360', description: 'Copa o botella' },
+          { id: 'tannat-reserva', name: 'Tannat Reserva', price: '$U 380', priceCents: 38000, description: 'Copa o botella' },
+          { id: 'chardonnay', name: 'Chardonnay', price: '$U 360', priceCents: 36000, description: 'Copa o botella' },
         ],
       },
     ],
@@ -250,7 +258,7 @@ export const site: SiteContent = {
         name: 'Delivery',
         description: 'Llevamos La Toscana hasta tu casa, en Florida y alrededores.',
         cta: 'Pedir delivery',
-        href: whatsapp('¡Hola! Quiero hacer un pedido con delivery.'),
+        href: '#menu',
       },
       {
         id: 'retiro',
@@ -258,7 +266,7 @@ export const site: SiteContent = {
         name: 'Retiro',
         description: 'Pedí y pasá a buscarlo caliente por el restaurante, sin espera.',
         cta: 'Pedir para retirar',
-        href: whatsapp('¡Hola! Quiero hacer un pedido para retirar por el local.'),
+        href: '#menu',
       },
       {
         id: 'whatsapp',
@@ -388,7 +396,7 @@ export const site: SiteContent = {
     kicker: '¿Cenamos?',
     title: 'Descubrí momentos inolvidables',
     primaryCta: { label: 'Reservar', href: '#reservas' },
-    secondaryCta: { label: 'Pedir ahora', href: '#pedir' },
+    secondaryCta: { label: 'Pedir ahora', href: '#menu' },
   },
 
   footer: {

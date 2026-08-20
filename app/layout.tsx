@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { getSiteContent, type SiteContent } from '@/content'
 import './globals.css'
+import { CartProvider } from '@/components/CartProvider'
+import { Cart } from '@/components/Cart'
+import { CommerceProvider } from '@/components/CommerceProvider'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
@@ -74,16 +77,19 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="es-UY">
       <body>
+        <CommerceProvider><CartProvider>
         {/* Gates the reveal animation on scripting so the page is never hidden
             when JS is off or still loading. Runs before the body paints. */}
         <script
           dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }}
         />
         {children}
+        <Cart />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd(site)) }}
         />
+        </CartProvider></CommerceProvider>
       </body>
     </html>
   )
