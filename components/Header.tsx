@@ -101,10 +101,10 @@ export function Header({ brand, nav, order, reserve, contact }: Props) {
       <div
         id="menu-principal"
         className={`${styles.panel} ${open ? styles.panelOpen : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menú"
-        /* Removed from the tab order and the a11y tree while closed. */
+        /* El panel queda en el DOM para poder animarse, pero sólo se anuncia
+           como diálogo modal mientras está abierto: si no, le dice al lector de
+           pantalla que el resto de la página está inerte todo el tiempo. */
+        {...(open ? { role: 'dialog', 'aria-modal': true, 'aria-label': 'Menú' } : {})}
         inert={!open}
       >
         <div className={styles.panelHead}>

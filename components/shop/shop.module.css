@@ -1,0 +1,1285 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   La Toscana — sistema visual de la experiencia de compra.
+
+   CAUSA RAÍZ DEL BUG DE CONTRASTE: el configurador anterior se abría desde la
+   sección oscura de la carta y heredaba sus tokens de tinta (--ink-light,
+   --ink-light-soft, --ink-light-faint) sobre una superficie clara. Título,
+   precio base, nombres de variantes y adicionales quedaban blanco sobre crema.
+
+   Por eso todo lo comercial declara acá sus propios tokens de superficie clara
+   y NUNCA usa los de sección oscura. Ninguna regla de este archivo referencia
+   --ink-light*.
+
+   División tipográfica, según el pedido:
+   EDITORIAL (serif de marca) → nombre del plato, títulos.
+   INTERFAZ (sans legible)    → precios, opciones, cantidades, inputs, botones.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.scope {
+  --s-bg: #faf8f4;
+  --s-surface: #ffffff;
+  --s-surface-2: #f5f2ea;
+  --s-line: rgba(32, 31, 29, 0.11);
+  --s-line-strong: rgba(32, 31, 29, 0.2);
+
+  /* Contraste medido sobre --s-surface: ink 15.8:1 · ink-2 6.4:1 · ink-3 4.6:1.
+     Ningún texto funcional baja de 4.5:1. */
+  --s-ink: #201f1d;
+  --s-ink-2: #57514a;
+  --s-ink-3: #756e64;
+
+  --s-accent: #b68235;
+  --s-accent-deep: #7d5411;
+  --s-accent-soft: rgba(182, 130, 53, 0.12);
+  --s-accent-line: rgba(182, 130, 53, 0.45);
+
+  --s-danger: #8c3a30;
+  --s-danger-soft: rgba(150, 60, 50, 0.1);
+  --s-ok: #4a5c2e;
+
+  --s-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --s-serif: var(--font-heading, Georgia, serif);
+
+  --s-11: 0.6875rem;
+  --s-12: 0.75rem;
+  --s-13: 0.8125rem;
+  --s-14: 0.875rem;
+  --s-15: 0.9375rem;
+  --s-16: 1rem;
+  --s-18: 1.125rem;
+  --s-20: 1.25rem;
+  --s-24: 1.5rem;
+
+  --s-pad: clamp(16px, 4.5vw, 28px);
+  --s-r: 12px;
+  --s-r-sm: 9px;
+  --s-tap: 48px;
+  --s-shadow: 0 1px 2px rgba(32, 31, 29, 0.05), 0 2px 8px rgba(32, 31, 29, 0.05);
+  --s-shadow-lift: 0 -8px 40px rgba(24, 21, 18, 0.16);
+
+  font-family: var(--s-sans);
+  color: var(--s-ink);
+}
+
+.scope *,
+.scope *::before,
+.scope *::after {
+  box-sizing: border-box;
+}
+
+.scope :focus-visible {
+  outline: 2px solid var(--s-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TARJETA DE PRODUCTO — toda la tarjeta es el control
+   ════════════════════════════════════════════════════════════════════════ */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: var(--s-ink);
+  transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* El control se estira por encima de la tarjeta entera: se toca donde sea,
+   pero para el teclado hay un único botón con el nombre del plato. */
+.cardLink {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.cardLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+}
+.cardLink:focus-visible {
+  outline: none;
+}
+
+/* Feedback táctil: en el teléfono no hay hover, así que la tarjeta se hunde. */
+.card:has(.cardLink:active) {
+  transform: scale(0.985);
+}
+
+/* El foco se dibuja sobre la tarjeta, no sobre el texto del botón. */
+.card:has(.cardLink:focus-visible) {
+  outline: 2px solid var(--s-accent);
+  outline-offset: 5px;
+  border-radius: 4px;
+}
+
+.cardMedia {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--s-surface-2);
+  transition: box-shadow 0.3s ease;
+}
+
+.cardMedia img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Señal de que se puede comprar, discreta: un + sobre la foto. */
+.cardPlus {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(250, 248, 244, 0.94);
+  color: var(--s-ink);
+  box-shadow: 0 2px 8px rgba(24, 21, 18, 0.18);
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease;
+}
+.card:has(.cardLink:active) .cardPlus {
+  transform: scale(0.9);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+}
+
+.cardNameRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--s-line);
+  padding-bottom: 9px;
+}
+
+/* Editorial: el nombre del plato conserva la serif de marca. */
+.cardName {
+  margin: 0;
+  font-family: var(--s-serif);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 0.9vw + 1.05rem, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--s-ink);
+}
+
+/* Interfaz: el precio es dato, va en sans y tabular. */
+.cardPrice {
+  font-family: var(--s-sans);
+  font-size: var(--s-15);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--s-accent-deep);
+  white-space: nowrap;
+}
+
+.cardDescription {
+  margin: 0;
+  font-size: var(--s-14);
+  line-height: 1.5;
+  color: var(--s-ink-2);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: var(--s-12);
+  color: var(--s-ink-3);
+}
+
+.cardBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--s-surface-2);
+  font-size: var(--s-11);
+  font-weight: 600;
+  color: var(--s-ink-2);
+}
+
+.cardSoldOut {
+  background: var(--s-danger-soft);
+  color: var(--s-danger);
+}
+
+.cardUnavailable .cardMedia {
+  filter: grayscale(0.7);
+  opacity: 0.72;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .cardMedia img {
+    transform: scale(1.045);
+  }
+  .card:hover .cardMedia {
+    box-shadow: 0 6px 22px rgba(24, 21, 18, 0.14);
+  }
+  .card:hover .cardName {
+    color: var(--s-accent-deep);
+  }
+  .card:hover .cardPlus {
+    background: var(--s-ink);
+    color: #fff;
+    transform: scale(1.06);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   FILA DE LA CARTA — mismo destino, otro lenguaje
+   La carta impresa se mantiene: sin foto, con línea de puntos. Sólo cambia que
+   ahora toda la fila es el control.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.row {
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(239, 233, 223, 0.12);
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease;
+}
+.row:last-child {
+  border-bottom: 0;
+}
+.row:active {
+  background: rgba(239, 233, 223, 0.07);
+}
+.row:focus-visible {
+  outline: 2px solid #facb8d;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover {
+    background: rgba(239, 233, 223, 0.05);
+  }
+  .row:hover .rowName {
+    color: #facb8d;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   HOJA / MODAL DE PRODUCTO
+   ════════════════════════════════════════════════════════════════════════ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(24, 21, 18, 0.55);
+  animation: fade 0.2s ease;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 94dvh;
+  overflow: hidden;
+  background: var(--s-bg);
+  border-radius: 18px 18px 0 0;
+  box-shadow: var(--s-shadow-lift);
+  animation: rise 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(6%);
+  }
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(250, 248, 244, 0.92);
+  backdrop-filter: blur(6px);
+  color: var(--s-ink);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(24, 21, 18, 0.18);
+  transition: background-color 0.2s ease;
+}
+.close:active {
+  background: #fff;
+}
+
+/* La comida sigue siendo protagonista también acá. */
+.media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  flex: none;
+  background: var(--s-surface-2);
+  overflow: hidden;
+}
+
+.mediaFallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(150deg, #efe9df 0%, #ded5c6 60%, #e7dfd2 100%);
+  color: #9a8d7a;
+}
+
+/* Contenido y pie: apilados debajo de la foto en teléfono, y en la columna
+   derecha del modal en escritorio. */
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.scroller {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.body {
+  display: grid;
+  gap: 18px;
+  padding: 18px var(--s-pad) 22px;
+}
+
+.head {
+  display: grid;
+  gap: 8px;
+}
+
+.kicker {
+  font-size: var(--s-11);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s-ink-3);
+}
+
+/* Editorial: el nombre del plato. */
+.title {
+  margin: 0;
+  font-family: var(--s-serif);
+  font-weight: 400;
+  font-size: clamp(1.625rem, 4.5vw, 2.125rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--s-ink);
+  text-transform: none;
+}
+
+.description {
+  margin: 0;
+  font-size: var(--s-15);
+  line-height: 1.55;
+  color: var(--s-ink-2);
+}
+
+.basePrice {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: var(--s-20);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--s-ink);
+}
+
+.basePriceLabel {
+  font-size: var(--s-12);
+  font-weight: 500;
+  color: var(--s-ink-3);
+}
+
+/* ── Grupos de opciones ──────────────────────────────────────────────────── */
+
+.group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 0 8px;
+  width: 100%;
+}
+
+.groupName {
+  font-size: var(--s-16);
+  font-weight: 600;
+  color: var(--s-ink);
+}
+
+/* Badge discreto, no gritón. */
+.required {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--s-accent-soft);
+  color: var(--s-accent-deep);
+  font-size: var(--s-11);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.optional {
+  background: var(--s-surface-2);
+  color: var(--s-ink-3);
+}
+
+.choices {
+  display: grid;
+  gap: 8px;
+}
+
+/* Fila entera clickeable, 56px de alto, indicador propio. */
+.choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 14px;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-r-sm);
+  background: var(--s-surface);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.choiceInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.dot {
+  position: relative;
+  flex: none;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  border: 1.5px solid var(--s-line-strong);
+  background: var(--s-surface);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: #fff;
+  transform: scale(0);
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.choiceName {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--s-15);
+  font-weight: 500;
+  color: var(--s-ink);
+}
+
+.choicePrice {
+  flex: none;
+  font-size: var(--s-14);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--s-ink-2);
+}
+
+.choiceIncluded {
+  font-weight: 500;
+  color: var(--s-ink-3);
+}
+
+.choiceSelected {
+  border-color: var(--s-accent);
+  background: var(--s-accent-soft);
+}
+.choiceSelected .dot {
+  border-color: var(--s-accent);
+  background: var(--s-accent);
+}
+.choiceSelected .dot::after {
+  transform: scale(1);
+}
+.choiceSelected .choicePrice {
+  color: var(--s-accent-deep);
+}
+
+.choiceInput:focus-visible + .dot {
+  outline: 2px solid var(--s-accent);
+  outline-offset: 2px;
+}
+
+/* Variante agotada: legible, nunca un gris fantasma. */
+.choiceDisabled {
+  cursor: not-allowed;
+  background: var(--s-surface-2);
+  border-style: dashed;
+}
+.choiceDisabled .choiceName {
+  color: var(--s-ink-3);
+  text-decoration: line-through;
+  text-decoration-color: var(--s-line-strong);
+}
+.choiceDisabled .choicePrice {
+  color: var(--s-ink-3);
+}
+
+.choiceOut {
+  flex: none;
+  font-size: var(--s-11);
+  font-weight: 600;
+  color: var(--s-danger);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .choice:hover {
+    border-color: var(--s-line-strong);
+  }
+  .choiceSelected:hover {
+    border-color: var(--s-accent);
+  }
+  .choiceDisabled:hover {
+    border-color: var(--s-line);
+  }
+}
+
+/* ── Observaciones ───────────────────────────────────────────────────────── */
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.label {
+  font-size: var(--s-13);
+  font-weight: 600;
+  color: var(--s-ink-2);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 84px;
+  padding: 12px 14px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: var(--s-r-sm);
+  background: var(--s-surface);
+  color: var(--s-ink);
+  /* 16px evita el zoom automático de iOS al enfocar. */
+  font: 400 16px / 1.5 var(--s-sans);
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.textarea::placeholder {
+  color: var(--s-ink-3);
+}
+.textarea:focus {
+  outline: none;
+  border-color: var(--s-accent);
+  box-shadow: 0 0 0 3px var(--s-accent-soft);
+}
+
+.counter {
+  justify-self: end;
+  font-size: var(--s-11);
+  font-variant-numeric: tabular-nums;
+  color: var(--s-ink-3);
+}
+
+/* ── Pie pegajoso con cantidad y CTA ─────────────────────────────────────── */
+
+.footer {
+  flex: none;
+  display: grid;
+  gap: 10px;
+  padding: 12px var(--s-pad) calc(12px + env(safe-area-inset-bottom));
+  background: var(--s-surface);
+  border-top: 1px solid var(--s-line);
+  box-shadow: 0 -6px 24px rgba(24, 21, 18, 0.07);
+}
+
+.footerRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: 999px;
+  background: var(--s-surface);
+}
+
+.stepperBtn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--s-ink);
+  font-size: var(--s-18);
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+.stepperBtn:active {
+  background: var(--s-surface-2);
+}
+.stepperBtn:disabled {
+  color: var(--s-ink-3);
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.stepperValue {
+  min-width: 26px;
+  text-align: center;
+  font-size: var(--s-16);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: var(--s-tap);
+  padding: 0 18px;
+  border: 1px solid var(--s-ink);
+  border-radius: var(--s-r-sm);
+  background: var(--s-ink);
+  color: #fff;
+  font: 600 var(--s-15) / 1.2 var(--s-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.12s ease;
+}
+.cta:active {
+  transform: scale(0.99);
+}
+
+.ctaPrice {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.92;
+}
+
+/* Deshabilitado: secundario pero perfectamente legible (6.4:1), nunca el gris
+   fantasma que tenía antes. */
+.cta:disabled {
+  background: var(--s-surface-2);
+  border-color: var(--s-line-strong);
+  color: var(--s-ink-2);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* En teléfono el stepper cede ancho para que el CTA entre en una sola línea. */
+@media (max-width: 480px) {
+  .cta {
+    font-size: var(--s-14);
+    padding-inline: 12px;
+    gap: 7px;
+  }
+  .stepperBtn {
+    width: 36px;
+    height: 36px;
+  }
+  .stepperValue {
+    min-width: 22px;
+    font-size: var(--s-15);
+  }
+}
+
+.ctaNote {
+  margin: 0;
+  font-size: var(--s-12);
+  text-align: center;
+  color: var(--s-ink-3);
+}
+
+.ctaWarn {
+  color: var(--s-danger);
+  font-weight: 500;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover:not(:disabled) {
+    background: #35322d;
+  }
+}
+
+/* ── Desktop: dos columnas ───────────────────────────────────────────────── */
+
+@media (min-width: 880px) {
+  .backdrop {
+    align-items: center;
+    padding: 28px;
+  }
+
+  .sheet {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    width: min(940px, 100%);
+    max-height: min(660px, 88dvh);
+    border-radius: 14px;
+    animation: pop 0.24s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.985);
+    }
+  }
+
+  /* Izquierda: la foto, a toda la altura del modal. */
+  .media {
+    aspect-ratio: auto;
+    height: 100%;
+    grid-row: 1 / -1;
+  }
+
+  /* Derecha: contenido y pie, apilados. */
+  .column {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: min(660px, 88dvh);
+  }
+
+  .body {
+    padding: 26px var(--s-pad) 24px;
+  }
+
+  .footer {
+    padding-bottom: 16px;
+  }
+
+  .close {
+    background: rgba(250, 248, 244, 0.9);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CARRITO
+   ════════════════════════════════════════════════════════════════════════ */
+
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--s-ink);
+  color: #fff;
+  font: 600 var(--s-14) / 1 var(--s-sans);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(24, 21, 18, 0.28);
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease;
+}
+.fab:active {
+  transform: scale(0.96);
+}
+
+/* Late cuando entra algo al pedido. */
+.fabBump {
+  animation: bump 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes bump {
+  30% {
+    transform: scale(1.09);
+  }
+  60% {
+    transform: scale(0.97);
+  }
+}
+
+.fabCount {
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--s-accent);
+  font-size: var(--s-13);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.drawerBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(24, 21, 18, 0.5);
+  animation: fade 0.2s ease;
+}
+
+.drawer {
+  position: fixed;
+  z-index: 110;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 92dvh;
+  background: var(--s-bg);
+  border-radius: 18px 18px 0 0;
+  box-shadow: var(--s-shadow-lift);
+  animation: rise 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.drawerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: none;
+  padding: 16px var(--s-pad);
+  border-bottom: 1px solid var(--s-line);
+  background: var(--s-surface);
+}
+
+.drawerTitle {
+  margin: 0;
+  font-family: var(--s-serif);
+  font-weight: 400;
+  font-size: var(--s-24);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--s-ink);
+  text-transform: none;
+}
+
+.drawerCount {
+  font-size: var(--s-12);
+  color: var(--s-ink-3);
+}
+
+.drawerClose {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border: 1px solid var(--s-line);
+  border-radius: 50%;
+  background: var(--s-surface);
+  color: var(--s-ink);
+  cursor: pointer;
+}
+.drawerClose:active {
+  background: var(--s-surface-2);
+}
+
+.lines {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px var(--s-pad);
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  background: var(--s-surface);
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-r);
+  box-shadow: var(--s-shadow);
+}
+
+.lineMedia {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--s-r-sm);
+  overflow: hidden;
+  background: var(--s-surface-2);
+}
+
+.lineBody {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.lineTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lineName {
+  font-family: var(--s-serif);
+  font-weight: 400;
+  font-size: var(--s-18);
+  line-height: 1.15;
+  color: var(--s-ink);
+}
+
+.linePrice {
+  font-size: var(--s-15);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--s-ink);
+  white-space: nowrap;
+}
+
+.lineVariants {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+  font-size: var(--s-12);
+  color: var(--s-ink-2);
+}
+
+.lineNotes {
+  margin: 0;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: var(--s-accent-soft);
+  font-size: var(--s-12);
+  color: var(--s-accent-deep);
+}
+
+.lineActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.lineStepper {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: 999px;
+}
+
+.lineStepperBtn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--s-ink);
+  font-size: var(--s-16);
+  cursor: pointer;
+}
+.lineStepperBtn:active {
+  background: var(--s-surface-2);
+}
+
+.lineQty {
+  min-width: 22px;
+  text-align: center;
+  font-size: var(--s-14);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lineBtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: var(--s-r-sm);
+  background: var(--s-surface);
+  color: var(--s-ink-2);
+  font: 500 var(--s-13) / 1 var(--s-sans);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+.lineBtn:active {
+  background: var(--s-surface-2);
+}
+
+.lineRemove {
+  margin-left: auto;
+  border-color: transparent;
+  color: var(--s-ink-3);
+}
+.lineRemove:active {
+  color: var(--s-danger);
+  background: var(--s-danger-soft);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lineBtn:hover {
+    border-color: var(--s-ink-3);
+    color: var(--s-ink);
+  }
+  .lineRemove:hover {
+    border-color: rgba(150, 60, 50, 0.35);
+    color: var(--s-danger);
+  }
+  .drawerClose:hover,
+  .close:hover {
+    background: var(--s-surface-2);
+  }
+  .fab:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.drawerFoot {
+  flex: none;
+  display: grid;
+  gap: 10px;
+  padding: 14px var(--s-pad) calc(16px + env(safe-area-inset-bottom));
+  background: var(--s-surface);
+  border-top: 1px solid var(--s-line);
+}
+
+.totalRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: var(--s-13);
+  color: var(--s-ink-2);
+}
+
+.totalGrand {
+  font-size: var(--s-16);
+  font-weight: 700;
+  color: var(--s-ink);
+}
+.totalGrand strong {
+  font-size: var(--s-20);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Avisos: mínimo de delivery, pedidos cerrados, producto sin stock. */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: var(--s-r-sm);
+  font-size: var(--s-13);
+  line-height: 1.45;
+}
+
+.noticeInfo {
+  background: var(--s-accent-soft);
+  color: var(--s-accent-deep);
+}
+
+.noticeWarn {
+  background: var(--s-danger-soft);
+  color: var(--s-danger);
+}
+
+.emptyCart {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: clamp(36px, 12vw, 64px) 20px;
+  text-align: center;
+}
+
+.emptyMark {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--s-surface-2);
+  color: var(--s-ink-3);
+}
+
+.emptyTitle {
+  font-family: var(--s-serif);
+  font-size: var(--s-20);
+  color: var(--s-ink);
+}
+
+.emptyText {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--s-14);
+  color: var(--s-ink-3);
+}
+
+/* Desde tablet el carrito es un panel lateral. */
+@media (min-width: 720px) {
+  .drawer {
+    inset: 0 0 0 auto;
+    width: min(440px, 100%);
+    max-height: none;
+    border-radius: 0;
+    animation: slide 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @keyframes slide {
+    from {
+      transform: translateX(4%);
+      opacity: 0.6;
+    }
+  }
+
+  .drawerFoot {
+    padding-bottom: 18px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   AVISO DE AGREGADO
+   ════════════════════════════════════════════════════════════════════════ */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  z-index: 130;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--s-ink);
+  color: #fff;
+  font: 500 var(--s-14) / 1.2 var(--s-sans);
+  white-space: nowrap;
+  box-shadow: 0 8px 30px rgba(24, 21, 18, 0.3);
+  animation: toastIn 0.26s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.toastMark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--s-ok);
+  color: #fff;
+  flex: none;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+}
+
+@media (min-width: 720px) {
+  .toast {
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    left: auto;
+    right: 24px;
+    transform: none;
+  }
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet,
+  .drawer,
+  .backdrop,
+  .toast,
+  .fabBump {
+    animation: none;
+  }
+  .card,
+  .cardMedia img,
+  .cardPlus {
+    transition: none;
+  }
+}

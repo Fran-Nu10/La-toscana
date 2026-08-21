@@ -1,25 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { SiteContent } from '@/content'
-import { Photo } from './Photo'
+import type { Product } from '@/data/types'
+import { useCart } from './CartProvider'
+import { useCommerce } from './CommerceProvider'
+import { ProductCard } from './shop/ProductCard'
+import { ProductSheet } from './shop/ProductSheet'
 import styles from './Dishes.module.css'
 
 /**
- * "Platos de la casa".
+ * "Platos de la casa" — el catálogo con fotos.
  *
- * On a phone the dishes run as a swipeable rail with the next card peeking, so
- * the photography stays large enough to want — eight stacked full-width cards
- * would be a very long scroll for the same information. From 600px up it
- * becomes a grid: two across, then four at the full measure.
+ * Antes eran tarjetas de contenido estático: linda foto, precio escrito a mano
+ * y ningún comportamiento al tocarlas. Ahora salen del catálogo real, así que
+ * el precio y la disponibilidad son los que el dueño carga en el panel, y cada
+ * tarjeta abre el detalle del producto.
  *
- * The rail is native scroll-snap. No carousel library, no JavaScript.
+ * El envoltorio no cambia: riel con scroll-snap en teléfono, grilla de dos y
+ * después cuatro columnas, y "cargar más" para el resto.
  */
 export function Dishes({ dishes }: { dishes: SiteContent['dishes'] }) {
+  const commerce = useCommerce()
+  const cart = useCart()
   const [shown, setShown] = useState(dishes.initialCount)
+  const [openProduct, setOpenProduct] = useState<Product | null>(null)
 
-  const visible = dishes.items.slice(0, shown)
-  const hasMore = shown < dishes.items.length
+  const catalogue = useMemo(() => {
+    const visibleCategories = new Set(
+      commerce.categories.filter((category) => category.available).map((category) => category.id),
+    )
+    return commerce.products.filter((product) => visibleCategories.has(product.categoryId))
+  }, [commerce.categories, commerce.products])
+
+  const visible = catalogue.slice(0, shown)
+  const hasMore = shown < catalogue.length
 
   return (
     <section id="platos" className={styles.section}>
@@ -31,11 +46,11 @@ export function Dishes({ dishes }: { dishes: SiteContent['dishes'] }) {
       </div>
 
       <ul className={styles.cards}>
-        {visible.map((dish, index) => (
+        {visible.map((product, index) => (
           <li
-            key={dish.id}
+            key={product.id}
             className={styles.card}
-            /* Cards revealed by the button rise in one after the other. */
+            /* Las tarjetas que trae el botón entran una detrás de otra. */
             data-fresh={index >= dishes.initialCount ? '' : undefined}
             style={
               index >= dishes.initialCount
@@ -43,19 +58,11 @@ export function Dishes({ dishes }: { dishes: SiteContent['dishes'] }) {
                 : undefined
             }
           >
-            <div className={`plate ${styles.plate}`}>
-              <Photo
-                photo={dish.photo}
-                sizes="(min-width: 1200px) 300px, (min-width: 600px) 45vw, 78vw"
-              />
-            </div>
-            <div className={styles.text}>
-              <div className={styles.nameRow}>
-                <h3 className={styles.name}>{dish.name}</h3>
-                <span className={`${styles.price} tnum`}>{dish.price}</span>
-              </div>
-              <p className={styles.description}>{dish.description}</p>
-            </div>
+            <ProductCard
+              product={product}
+              sizes="(min-width: 1200px) 300px, (min-width: 600px) 45vw, 78vw"
+              onOpen={setOpenProduct}
+            />
           </li>
         ))}
       </ul>
@@ -65,11 +72,22 @@ export function Dishes({ dishes }: { dishes: SiteContent['dishes'] }) {
           <button
             type="button"
             className={`btn btn-secondary ${styles.moreButton}`}
-            onClick={() => setShown((value) => Math.min(dishes.items.length, value + dishes.step))}
+            onClick={() => setShown((value) => Math.min(catalogue.length, value + dishes.step))}
           >
             {dishes.loadMoreLabel}
           </button>
         </div>
+      )}
+
+      {openProduct && (
+        <ProductSheet
+          product={openProduct}
+          orderingOpen={commerce.settings.orderingOpen}
+          onClose={() => setOpenProduct(null)}
+          onConfirm={(selections, quantity, notes) =>
+            cart.add(openProduct, selections, quantity, notes, false)
+          }
+        />
       )}
     </section>
   )

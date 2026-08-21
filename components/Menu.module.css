@@ -115,8 +115,13 @@
   color: var(--ink-light-faint);
 }
 
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .item {
-  padding: 15px 0;
   border-bottom: 1px solid rgba(239, 233, 223, 0.1);
 }
 .item:last-child {
@@ -157,9 +162,33 @@
   color: var(--ink-light-soft);
   max-width: 46ch;
 }
-.add { margin-top: 10px; min-height: 42px; padding: 0 14px; border: 1px solid var(--color-accent-700); background: transparent; color: var(--color-accent-300); font: 500 var(--fs-kicker) var(--font-body); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition:background .2s,color .2s; }
-.add:disabled { opacity: .45; cursor: not-allowed; }
-.added{background:var(--color-accent-700);color:white}.customize{margin:8px 0 0;color:var(--color-accent-300);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase}.configurable{cursor:pointer}.configurable:focus-within{outline:1px solid var(--color-accent-700);outline-offset:5px}
+/* La descripción y la nota de opciones son <span> dentro del botón de la fila,
+   así que necesitan comportarse como bloque. */
+.itemDescription,
+.customize {
+  display: block;
+}
+
+.customize {
+  margin: 7px 0 0;
+  color: var(--color-accent-300);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Señal de "esto se toca" al final de la fila. */
+.itemGo {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid rgba(239, 233, 223, 0.28);
+  color: var(--color-accent-300);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
 
 .cardFoot {
   margin-top: clamp(20px, 4vw, 26px);
