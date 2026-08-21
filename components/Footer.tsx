@@ -47,7 +47,10 @@ export function Footer({ site }: { site: SiteContent }) {
 
       <div className={styles.bottom}>
         <span>{footer.legal}</span>
-        <span>{footer.colophon}</span>
+        <div className={styles.meta}>
+          <span>{footer.colophon}</span>
+          <a className={styles.adminLink} href="/admin">Acceso al restaurante</a>
+        </div>
       </div>
     </footer>
   )

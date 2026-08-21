@@ -67,6 +67,24 @@
   color: var(--color-neutral-500);
 }
 
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+
+.adminLink {
+  color: var(--color-neutral-500);
+  text-decoration: underline;
+  text-decoration-color: var(--color-divider);
+  text-underline-offset: 3px;
+}
+
+.adminLink:active {
+  color: var(--color-accent-700);
+}
+
 @media (min-width: 600px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -81,6 +99,9 @@
 
 @media (hover: hover) and (pointer: fine) {
   .link:hover {
+    color: var(--color-accent-700);
+  }
+  .adminLink:hover {
     color: var(--color-accent-700);
   }
 }
