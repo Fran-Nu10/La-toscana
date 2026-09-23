@@ -7,18 +7,15 @@ import { useCart } from './CartProvider'
 import { useCommerce } from './CommerceProvider'
 import { ProductCard } from './shop/ProductCard'
 import { ProductSheet } from './shop/ProductSheet'
+import { ShopIcons } from './shop/icons'
 import styles from './Dishes.module.css'
 
 /**
- * "Platos de la casa" — el catálogo con fotos.
+ * "Platos de la casa": el catálogo con fotos, directo del provider, así el
+ * precio y la disponibilidad son los que el restaurante carga en el panel.
  *
- * Antes eran tarjetas de contenido estático: linda foto, precio escrito a mano
- * y ningún comportamiento al tocarlas. Ahora salen del catálogo real, así que
- * el precio y la disponibilidad son los que el dueño carga en el panel, y cada
- * tarjeta abre el detalle del producto.
- *
- * El envoltorio no cambia: riel con scroll-snap en teléfono, grilla de dos y
- * después cuatro columnas, y "cargar más" para el resto.
+ * Teléfono: riel con scroll-snap y la tarjeta siguiente asomando. Desde 640px
+ * es una grilla que crece hasta cuatro columnas. "Ver más" trae el resto.
  */
 export function Dishes({ dishes }: { dishes: SiteContent['dishes'] }) {
   const commerce = useCommerce()
@@ -37,44 +34,52 @@ export function Dishes({ dishes }: { dishes: SiteContent['dishes'] }) {
   const hasMore = shown < catalogue.length
 
   return (
-    <section id="platos" className={styles.section}>
-      <div className={styles.head}>
-        <h2 className="sectionTitle sectionTitle--flush">{dishes.title}</h2>
-        <a href="#menu" className="ruleLink">
-          {dishes.menuLinkLabel}
-        </a>
+    <section id="platos" className={`section ${styles.section}`}>
+      <div className="container">
+        <div className="sectionHead sectionHead--split">
+          <div className={styles.headText}>
+            <p className="kicker">Lo más pedido</p>
+            <h2 className="title">{dishes.title}</h2>
+          </div>
+          <a href="#menu" className="textLink">
+            {dishes.menuLinkLabel}
+            {ShopIcons.arrow}
+          </a>
+        </div>
       </div>
 
-      <ul className={styles.cards}>
-        {visible.map((product, index) => (
-          <li
-            key={product.id}
-            className={styles.card}
-            /* Las tarjetas que trae el botón entran una detrás de otra. */
-            data-fresh={index >= dishes.initialCount ? '' : undefined}
-            style={
-              index >= dishes.initialCount
-                ? { animationDelay: `${((index - dishes.initialCount) % dishes.step) * 80}ms` }
-                : undefined
-            }
-          >
-            <ProductCard
-              product={product}
-              sizes="(min-width: 1200px) 300px, (min-width: 600px) 45vw, 78vw"
-              onOpen={setOpenProduct}
-            />
-          </li>
-        ))}
-      </ul>
+      <div className={`container ${styles.railWrap}`}>
+        <ul className={`rail ${styles.cards}`}>
+          {visible.map((product, index) => (
+            <li
+              key={product.id}
+              className={styles.card}
+              data-fresh={index >= dishes.initialCount ? '' : undefined}
+              style={
+                index >= dishes.initialCount
+                  ? { animationDelay: `${((index - dishes.initialCount) % dishes.step) * 70}ms` }
+                  : undefined
+              }
+            >
+              <ProductCard
+                product={product}
+                sizes="(min-width: 1200px) 300px, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 76vw"
+                onOpen={setOpenProduct}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {hasMore && (
-        <div className={styles.more}>
+        <div className={`container ${styles.more}`}>
           <button
             type="button"
-            className={`btn btn-secondary ${styles.moreButton}`}
+            className="btn btn--secondary btn--lg"
             onClick={() => setShown((value) => Math.min(catalogue.length, value + dishes.step))}
           >
             {dishes.loadMoreLabel}
+            <span className={`${styles.moreCount} tnum`}>{catalogue.length - shown}</span>
           </button>
         </div>
       )}

@@ -1,86 +1,148 @@
 .footer {
-  border-top: 1px solid var(--color-divider);
-  background: var(--color-bg);
+  background: var(--dark-bg-2);
+  color: var(--dark-ink-2);
+  padding-block: clamp(48px, 6vw, 80px) max(24px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--dark-line);
 }
 
 .grid {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: clamp(40px, 8vw, 64px) var(--gutter) clamp(20px, 4vw, 28px);
   display: grid;
-  gap: clamp(28px, 6vw, 40px);
+  gap: clamp(32px, 6vw, 48px);
+}
+
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .brand {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-style: italic;
-  font-size: clamp(1.5rem, 5vw, 1.625rem);
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 72, 'SOFT' 50;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
   line-height: 1;
+  color: var(--dark-ink);
 }
 
 .about {
-  margin: 10px 0 0;
-  font-size: var(--fs-small);
-  line-height: 1.65;
-  color: var(--color-neutral-700);
   max-width: 34ch;
+  font-size: var(--fs-small);
+  line-height: 1.55;
+}
+
+.social {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.socialBtn {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 50%;
+  border: 1px solid var(--dark-line);
+  color: var(--dark-ink);
+  transition: background-color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.socialBtn:active {
+  background: var(--dark-surface);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .heading {
-  font: 500 var(--fs-micro) var(--font-body);
-  letter-spacing: 0.2em;
+  font: 600 var(--fs-micro) var(--font-sans);
+  letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
-  color: var(--color-neutral-600);
-  margin-bottom: 10px;
+  color: var(--dark-ink-3);
 }
 
-.column {
+.list {
   display: flex;
   flex-direction: column;
+  gap: 0;
 }
 
-/* Footer links are a common exit on mobile — they get a real tap height. */
 .link,
-.text {
-  display: flex;
+.text,
+.textMuted {
+  display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: var(--tap);
   font-size: var(--fs-small);
-  color: var(--color-neutral-700);
+  color: var(--dark-ink);
+  transition: color var(--dur-fast) ease;
 }
-
-.link:active {
-  color: var(--color-accent);
+.textMuted {
+  color: var(--dark-ink-3);
 }
 
 .bottom {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: 16px var(--gutter) calc(16px + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--color-divider);
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 6px;
-  font-size: var(--fs-micro);
-  color: var(--color-neutral-500);
+  align-items: center;
+  gap: 8px 20px;
+  margin-top: clamp(36px, 5vw, 56px);
+  padding-top: 20px;
+  border-top: 1px solid var(--dark-line);
+  font-size: var(--fs-caption);
+  color: var(--dark-ink-3);
+}
+.colophon {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-small);
 }
 
-@media (min-width: 600px) {
+/* Acceso al panel: presente, pero sin llamar la atención. */
+.admin {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  font-size: var(--fs-micro);
+  color: var(--dark-ink-3);
+  opacity: 0.7;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: transparent;
+  transition: opacity var(--dur-fast) ease, text-decoration-color var(--dur-fast) ease;
+}
+
+@media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .brandCol {
+    grid-column: 1 / -1;
+  }
 }
-
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .grid {
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  }
+  .brandCol {
+    grid-column: auto;
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .link:hover {
-    color: var(--color-accent-700);
+    color: var(--dark-accent);
+  }
+  .socialBtn:hover {
+    background: var(--dark-surface);
+    border-color: var(--dark-ink-3);
+  }
+  .admin:hover {
+    opacity: 1;
+    text-decoration-color: currentColor;
   }
 }

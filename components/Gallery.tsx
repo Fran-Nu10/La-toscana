@@ -1,31 +1,38 @@
 import type { SiteContent } from '@/content'
 import { Photo } from './Photo'
+import { ShopIcons } from './shop/icons'
 import styles from './Gallery.module.css'
 
-/** From 700px the 1st and 3rd frames run two rows tall, so the grid reads as a
- *  spread rather than a row of equal tiles. On a phone it is a swipe rail. */
-const TALL_INDEXES = new Set([0, 2])
-
+/**
+ * Galería editorial: en escritorio, una grilla asimétrica de seis cuadros con
+ * dos protagonistas a doble altura; en teléfono, un riel a sangre con marcos
+ * de distinto ancho, para que el ojo no lea una tira de miniaturas iguales.
+ */
 export function Gallery({ gallery }: { gallery: SiteContent['gallery'] }) {
   return (
-    <section id="galeria" className={styles.section}>
-      <div className={styles.head}>
-        <h2 className="sectionTitle sectionTitle--sm sectionTitle--flush">{gallery.title}</h2>
-        <a href={gallery.linkHref} className="ruleLink" target="_blank" rel="noopener noreferrer">
-          {gallery.linkLabel}
-        </a>
+    <section id="galeria" className={`section ${styles.section}`}>
+      <div className="container">
+        <div className="sectionHead sectionHead--split">
+          <div className={styles.headText}>
+            <p className="kicker">Ambiente</p>
+            <h2 className="title">{gallery.title}</h2>
+          </div>
+          <a href={gallery.linkHref} className="textLink" target="_blank" rel="noopener noreferrer">
+            {ShopIcons.instagram}
+            {gallery.linkLabel}
+          </a>
+        </div>
       </div>
 
-      <ul className={styles.grid}>
-        {gallery.photos.map((photo, index) => (
-          <li
-            key={`${photo.src}-${index}`}
-            className={`plate ${styles.frame} ${TALL_INDEXES.has(index) ? styles.tall : ''}`}
-          >
-            <Photo photo={photo} sizes="(min-width: 700px) 25vw, 82vw" />
-          </li>
-        ))}
-      </ul>
+      <div className={`container ${styles.gridWrap}`}>
+        <ul className={`rail ${styles.grid}`}>
+          {gallery.photos.map((photo, index) => (
+            <li key={`${photo.src}-${index}`} className={`frame ${styles.cell}`} data-cell={index}>
+              <Photo photo={photo} sizes="(min-width: 960px) 33vw, (min-width: 640px) 50vw, 76vw" />
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )
 }

@@ -26,9 +26,8 @@ const MAX_NOTES = 300
 
 /**
  * Detalle de producto: hoja inferior en teléfono, modal a dos columnas desde
- * 880px. Es la única pantalla de producto — la abren la tarjeta del catálogo,
- * la fila de la carta y el botón "Editar" del carrito, siempre con el mismo
- * estado, así no hay dos interfaces para lo mismo.
+ * 900px. Es la única pantalla de producto — la abren la tarjeta del catálogo,
+ * la fila de la carta y "Editar" del carrito, siempre con el mismo estado.
  */
 export function ProductSheet({ product, line, orderingOpen = true, onClose, onConfirm }: Props) {
   const sheetRef = useRef<HTMLElement>(null)
@@ -86,13 +85,14 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
         aria-labelledby="producto-titulo"
         tabIndex={-1}
       >
-        <button type="button" className={styles.close} onClick={onClose} aria-label="Cerrar">
+        <span className={styles.handle} aria-hidden="true" />
+        <button type="button" className={`iconBtn ${styles.close}`} onClick={onClose} aria-label="Cerrar">
           {ShopIcons.close}
         </button>
 
         <div className={styles.media}>
           {photo ? (
-            <Photo photo={photo} sizes="(min-width: 880px) 490px, 100vw" />
+            <Photo photo={photo} sizes="(min-width: 900px) 440px, 100vw" />
           ) : (
             <div className={styles.mediaFallback} aria-hidden="true">
               {ShopIcons.plate}
@@ -104,29 +104,25 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
           <div className={styles.scroller}>
             <div className={styles.body}>
               <div className={styles.head}>
-                <p className={styles.kicker}>{isEditing ? 'Editar del pedido' : 'Del menú'}</p>
+                <p className={styles.kicker}>{isEditing ? 'Editar del pedido' : 'De la carta'}</p>
                 <h2 className={styles.title} id="producto-titulo">
                   {product.name}
                 </h2>
-                {product.description && (
-                  <p className={styles.description}>{product.description}</p>
-                )}
-                <p className={styles.basePrice}>
+                {product.description && <p className={styles.description}>{product.description}</p>}
+                <p className={`${styles.basePrice} tnum`}>
                   {formatUyu(product.priceCents)}
-                  {product.options.length > 0 && (
-                    <span className={styles.basePriceLabel}>precio base</span>
-                  )}
+                  {product.options.length > 0 && <span className={styles.basePriceLabel}>precio base</span>}
                 </p>
               </div>
 
               {soldOut && (
-                <p className={`${styles.notice} ${styles.noticeWarn}`}>
+                <p className="notice notice--warn">
                   {ShopIcons.alert}
                   Este plato no está disponible en este momento.
                 </p>
               )}
               {!orderingOpen && !soldOut && (
-                <p className={`${styles.notice} ${styles.noticeInfo}`}>
+                <p className="notice">
                   {ShopIcons.alert}
                   Ahora no estamos tomando pedidos. Podés mirar la carta igual.
                 </p>
@@ -136,9 +132,7 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
                 <fieldset className={styles.group} key={option.id}>
                   <legend className={styles.groupHead}>
                     <span className={styles.groupName}>{option.name}</span>
-                    <span
-                      className={`${styles.required} ${option.required ? '' : styles.optional}`}
-                    >
+                    <span className={`badge ${option.required ? 'badge--accent' : ''}`}>
                       {option.required ? 'Obligatorio' : 'Opcional'}
                     </span>
                   </legend>
@@ -165,19 +159,19 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
                               setSelected((current) => ({ ...current, [option.id]: choice.id }))
                             }
                           />
-                          <span className={styles.dot} aria-hidden="true" />
+                          <span className={styles.dot} aria-hidden="true">
+                            {ShopIcons.check}
+                          </span>
                           <span className={styles.choiceName}>{choice.name}</span>
                           {disabled ? (
                             <span className={styles.choiceOut}>Sin stock</span>
                           ) : (
                             <span
-                              className={`${styles.choicePrice} ${
+                              className={`${styles.choicePrice} tnum ${
                                 choice.priceDeltaCents ? '' : styles.choiceIncluded
                               }`}
                             >
-                              {choice.priceDeltaCents
-                                ? `+ ${formatUyu(choice.priceDeltaCents)}`
-                                : 'Incluido'}
+                              {choice.priceDeltaCents ? `+ ${formatUyu(choice.priceDeltaCents)}` : 'Incluido'}
                             </span>
                           )}
                         </label>
@@ -187,19 +181,20 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
                 </fieldset>
               ))}
 
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="producto-notas">
-                  Observaciones
+              <div className={`field ${styles.field}`}>
+                <label className="label" htmlFor="producto-notas">
+                  Observaciones <small>(opcional)</small>
                 </label>
                 <textarea
                   id="producto-notas"
-                  className={styles.textarea}
+                  className={`input ${styles.textarea}`}
                   value={notes}
                   maxLength={MAX_NOTES}
+                  rows={2}
                   placeholder="Ej. sin cebolla, punto de cocción…"
                   onChange={(event) => setNotes(event.target.value)}
                 />
-                <span className={styles.counter}>
+                <span className={`help tnum ${styles.counter}`}>
                   {notes.length}/{MAX_NOTES}
                 </span>
               </div>
@@ -218,7 +213,7 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
                 >
                   {ShopIcons.minus}
                 </button>
-                <span className={styles.stepperValue} aria-live="polite">
+                <span className={`${styles.stepperValue} tnum`} aria-live="polite">
                   {quantity}
                 </span>
                 <button
@@ -234,7 +229,7 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
 
               <button
                 type="button"
-                className={styles.cta}
+                className={`btn btn--primary btn--lg ${styles.cta}`}
                 disabled={blocked}
                 onClick={() => {
                   onConfirm(selections, quantity, notes)
@@ -242,15 +237,9 @@ export function ProductSheet({ product, line, orderingOpen = true, onClose, onCo
                 }}
               >
                 <span>{ctaLabel}</span>
-                {!blocked && <span className={styles.ctaPrice}>· {formatUyu(total)}</span>}
+                {!blocked && <span className={`${styles.ctaPrice} tnum`}>{formatUyu(total)}</span>}
               </button>
             </div>
-
-            {missing && !soldOut && orderingOpen && (
-              <p className={`${styles.ctaNote} ${styles.ctaWarn}`}>
-                Falta elegir {missing.name.toLowerCase()} para continuar.
-              </p>
-            )}
           </div>
         </div>
       </section>

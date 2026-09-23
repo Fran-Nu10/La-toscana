@@ -1,277 +1,187 @@
 .section {
-  background: var(--color-neutral-900);
-  color: var(--color-neutral-200);
+  padding-block: calc(var(--section-y) * 0.6) var(--section-y);
 }
 
-.inner {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: var(--section-y) var(--gutter);
+.head {
+  margin-bottom: var(--block-gap);
 }
 
-.body {
-  margin: 16px 0 0;
-  font-size: var(--fs-small);
-  line-height: var(--lh-body);
-  color: var(--ink-light-soft);
-  max-width: 52ch;
+.empty {
+  max-width: 48ch;
 }
 
-/* ── Mobile: the categories are a chip rail ──────────────────────────────────
-   Six stacked rows would push the carta itself off the screen; as a rail they
-   cost one line and the panel stays in view while you switch. */
-.categories {
-  display: flex;
+/* ── Chips pegajosos ─────────────────────────────────────────────────────── */
+.sticky {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 30;
+  background: rgba(245, 239, 228, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.railWrap {
+  padding-block: 10px;
+}
+.rail {
   gap: 8px;
-  margin-top: var(--block-gap);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  padding-inline: var(--gutter);
-  margin-inline: calc(var(--gutter) * -1);
-  scroll-padding-inline: var(--gutter);
-  scrollbar-width: none;
+  scroll-snap-type: none;
 }
-.categories::-webkit-scrollbar {
-  display: none;
+.chipCount {
+  font-size: var(--fs-micro);
+  opacity: 0.7;
 }
 
-.category {
-  scroll-snap-align: start;
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 18px;
-  background: transparent;
-  border: 1px solid var(--rule-light);
-  border-radius: var(--radius-md);
-  color: var(--ink-light-soft);
-  font-family: var(--font-heading);
-  font-size: 1.125rem;
-  letter-spacing: -0.005em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease,
-    background-color var(--dur-fast) ease;
-}
-.category:active {
-  background: rgba(239, 233, 223, 0.08);
-}
-.category:focus-visible {
-  outline: 2px solid var(--color-accent-300);
-  outline-offset: 2px;
-}
-
-.categoryActive {
-  color: var(--color-accent-300);
-  border-color: var(--color-accent-700);
-  background: rgba(212, 150, 83, 0.1);
-}
-
-.categoryName {
-  line-height: 1;
-}
-
-/* The count is an editorial detail for the desktop index, not for a chip. */
-.categoryCount {
-  display: none;
-  font: 500 var(--fs-micro) var(--font-body);
-  letter-spacing: 0.18em;
-}
-
-/* ── The carta ───────────────────────────────────────────────────────────── */
-
-.card {
-  margin-top: clamp(24px, 5vw, 32px);
-  border: 1px solid var(--rule-light);
-  padding: clamp(20px, 5vw, 34px);
-  align-self: start;
-}
-
-.cardHead {
+/* ── Grupos ──────────────────────────────────────────────────────────────── */
+.groups {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: clamp(36px, 6vw, 64px);
+  padding-top: clamp(24px, 4vw, 40px);
+}
+
+.group {
+  /* Deja libre header + chips al saltar con el riel. */
+  scroll-margin-top: calc(var(--header-h) + 72px);
+}
+
+.groupHead {
+  display: flex;
   align-items: baseline;
+  justify-content: space-between;
   gap: 16px;
-  border-bottom: 1px solid var(--color-accent-700);
-  padding-bottom: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--line-strong);
 }
-
-.cardTitle {
-  font-family: var(--font-heading);
-  font-size: clamp(1.5rem, 4vw, 1.875rem);
-  line-height: 1;
-  text-transform: uppercase;
-  color: var(--color-accent-300);
+.groupTitle {
+  font-size: var(--fs-h3);
 }
-
-.cardMark {
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-size: var(--fs-small);
-  color: var(--ink-light-faint);
+.groupCount {
+  font: 500 var(--fs-caption) var(--font-sans);
+  color: var(--ink-3);
+  white-space: nowrap;
 }
 
 .items {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .item {
-  border-bottom: 1px solid rgba(239, 233, 223, 0.1);
-}
-.item:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--line);
 }
 
-.itemRow {
+/* La fila entera es el botón. */
+.row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 0;
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--dur-fast) ease;
+}
+.row:active {
+  background: var(--surface-3);
+}
+.row:focus-visible {
+  outline-offset: 0;
+}
+
+.thumb {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--surface-3);
+  transition: transform var(--dur) var(--ease);
+}
+.thumbFallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--ink-4);
+}
+
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.rowTop {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
   align-items: baseline;
+  gap: 12px;
 }
-
-.itemName {
-  font-size: var(--fs-body);
-  color: var(--ink-light);
+.rowName {
+  font: 600 var(--fs-body) / 1.3 var(--font-sans);
+  color: var(--ink);
 }
-
-/* The dotted leader that carries the eye to the price, as on a printed carta.
-   It needs room to read, so it only appears once the line is wide enough. */
-.leader {
-  display: none;
-  flex: 1;
-  border-bottom: 1px dotted rgba(239, 233, 223, 0.25);
-  transform: translateY(-4px);
-}
-
-.itemPrice {
-  font: 500 var(--fs-body) var(--font-body);
-  color: var(--color-accent-300);
+.rowPrice {
+  font: 600 var(--fs-small) / 1.3 var(--font-sans);
+  color: var(--ink);
   white-space: nowrap;
 }
-
-.itemDescription {
-  margin: 4px 0 0;
-  font-size: var(--fs-small);
-  line-height: 1.5;
-  color: var(--ink-light-soft);
-  max-width: 46ch;
+.rowDescription {
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+  color: var(--ink-2);
 }
-/* La descripción y la nota de opciones son <span> dentro del botón de la fila,
-   así que necesitan comportarse como bloque. */
-.itemDescription,
-.customize {
-  display: block;
+.rowMeta {
+  margin-top: 3px;
+  font: 500 var(--fs-micro) var(--font-sans);
+  color: var(--accent-text);
 }
 
-.customize {
-  margin: 7px 0 0;
-  color: var(--color-accent-300);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* Señal de "esto se toca" al final de la fila. */
-.itemGo {
+.rowPlus {
   display: inline-grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  flex: none;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(239, 233, 223, 0.28);
-  color: var(--color-accent-300);
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease;
 }
 
-.cardFoot {
-  margin-top: clamp(20px, 4vw, 26px);
-}
-
-.download {
-  width: 100%;
-  min-height: 52px;
-  /* One line at 360px — the label is long and the button is full width. */
-  font-size: var(--fs-kicker);
-  letter-spacing: 0.1em;
-  border-color: var(--color-accent-400);
-  color: var(--color-accent-300);
-}
-.download:active {
-  background: rgba(212, 150, 83, 0.2);
-}
-
-/* ── From 480px the leader fits ──────────────────────────────────────────── */
-@media (min-width: 480px) {
-  .leader {
-    display: block;
-  }
-}
-
-/* ── Two columns: the index returns as a vertical list ───────────────────── */
+/* ── Breakpoints ─────────────────────────────────────────────────────────── */
 @media (min-width: 900px) {
-  .inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(40px, 5vw, 64px);
-    padding-block: var(--section-y-lg);
+  .items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(32px, 4vw, 56px);
   }
-
-  .categories {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    overflow: visible;
-    padding-inline: 0;
-    margin-inline: 0;
-    scroll-snap-type: none;
+  .row {
+    grid-template-columns: 88px minmax(0, 1fr) auto;
+    padding: 16px 0;
   }
-
-  .category {
-    justify-content: space-between;
-    width: 100%;
-    min-height: 56px;
-    padding: 0 4px;
-    border: 0;
-    border-bottom: 1px solid var(--rule-light);
-    border-radius: 0;
-    background: transparent;
-    font-size: 1.625rem;
-    color: rgba(239, 233, 223, 0.85);
-    transition: color var(--dur-fast) ease, padding-left var(--dur) var(--ease);
-  }
-  .categoryActive {
-    color: var(--color-accent-300);
-    background: transparent;
-    border-bottom-color: var(--color-accent-700);
-  }
-  .categoryCount {
-    display: block;
-  }
-
-  .card {
-    margin-top: 0;
-    align-self: start;
-  }
-
-  .download {
-    width: 100%;
+  .thumb {
+    width: 88px;
+    height: 88px;
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .category:hover {
-    color: var(--color-accent-300);
-    border-color: var(--color-accent-700);
+  .row:hover .thumb {
+    transform: scale(1.04);
   }
-  .download:hover {
-    background: rgba(212, 150, 83, 0.16);
-    color: var(--color-accent-200);
+  .row:hover .rowName {
+    color: var(--accent-text);
+  }
+  .row:hover .rowPlus {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--dark-ink);
   }
 }

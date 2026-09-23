@@ -1,105 +1,65 @@
 .section {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: var(--section-y) var(--gutter);
+  padding-bottom: calc(var(--section-y) * 0.6);
 }
 
-.head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-/* ── Mobile: a snap rail with the next card peeking ──────────────────────────
-   Full-bleed so the cards can run to the screen edge, but the first card still
-   lines up with the page gutter. */
-.cards {
-  list-style: none;
-  margin: var(--block-gap) 0 0;
-  padding: 0;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min(78vw, 320px);
-  gap: var(--card-gap);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  padding-inline: var(--gutter);
-  margin-inline: calc(var(--gutter) * -1);
-  scroll-padding-inline: var(--gutter);
-  scrollbar-width: none;
-}
-.cards::-webkit-scrollbar {
-  display: none;
-}
-
-.card {
-  scroll-snap-align: start;
+.headText {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  min-width: 0;
+  gap: 12px;
+}
+
+.railWrap {
+  margin-top: var(--block-gap);
+}
+
+/* Teléfono: riel. */
+.cards > .card {
+  width: min(76vw, 300px);
 }
 
 .card[data-fresh] {
-  animation: rise 0.5s var(--ease) both;
+  animation: fadeUp 0.5s var(--ease) both;
 }
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Prices are commercial information: tabular, accent, and never smaller than
-   the body text around them. */
 
 .more {
-  margin-top: clamp(28px, 6vw, 40px);
   display: flex;
   justify-content: center;
+  margin-top: clamp(28px, 5vw, 40px);
+}
+.moreCount {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding-inline: 6px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  font-size: var(--fs-micro);
+  color: var(--ink-2);
 }
 
-.moreButton {
-  min-width: min(100%, 280px);
-  letter-spacing: var(--tracking-label);
-  color: var(--color-neutral-700);
-}
-
-/* ── Two across ──────────────────────────────────────────────────────────── */
-@media (min-width: 600px) {
+/* ── Grilla ──────────────────────────────────────────────────────────────── */
+@media (min-width: 640px) {
   .cards {
-    grid-auto-flow: row;
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-columns: auto;
+    gap: clamp(20px, 3vw, 32px) var(--card-gap);
     overflow: visible;
     scroll-snap-type: none;
     padding-inline: 0;
     margin-inline: 0;
-    row-gap: clamp(32px, 5vw, 44px);
+  }
+  .cards > .card {
+    width: auto;
   }
 }
-
-/* ── The full four-across measure ────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 @media (min-width: 1200px) {
   .cards {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  .moreButton {
-    min-width: 260px;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .moreButton:hover {
-    color: var(--color-accent-700);
-    border-color: var(--color-accent);
   }
 }

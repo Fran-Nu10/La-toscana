@@ -10,15 +10,17 @@ import { Hero } from '@/components/Hero'
 import { Location } from '@/components/Location'
 import { Menu } from '@/components/Menu'
 import { Order } from '@/components/Order'
-import { PromoBar } from '@/components/PromoBar'
 import { Promos } from '@/components/Promos'
 import { Reservations } from '@/components/Reservations'
 import { Reviews } from '@/components/Reviews'
 
 /**
- * The homepage: one editorial scroll from the hero to the footer. Sections are
- * ordered as the design lays them out — impact, then story, then the two things
- * a guest came to do (pedir, reservar), then proof and practicalities.
+ * La home: un solo recorrido del hero al footer.
+ *
+ * Orden: impacto (hero) → qué se come (platos, carta) → cómo pedir → por qué
+ * volver (experiencia, promos) → reservar → celebrar → ambiente → prueba
+ * social → datos prácticos → cierre. Lo comercial va antes que la historia
+ * porque quien llega desde Instagram o Maps viene, casi siempre, a comer.
  */
 export default async function HomePage() {
   const site = await getSiteContent()
@@ -28,8 +30,6 @@ export default async function HomePage() {
       <a href="#inicio" className="skipLink">
         Saltar al contenido
       </a>
-
-      {site.promoBar.enabled && <PromoBar text={site.promoBar.text} />}
 
       <Header
         brand={site.brand.name}
@@ -47,21 +47,15 @@ export default async function HomePage() {
       />
 
       <main>
-        <Hero hero={site.hero} />
-        <Experience experience={site.experience} />
-
-        <div className="hr pageRule" />
-
+        <Hero hero={site.hero} promo={site.promoBar.enabled ? site.promoBar.text : undefined} />
         <Dishes dishes={site.dishes} />
         <Menu menu={site.menu} />
         <Order order={site.order} />
+        <Experience experience={site.experience} />
         <Promos promos={site.promos} />
         <Reservations reservations={site.reservations} />
         <Events events={site.events} />
         <Gallery gallery={site.gallery} />
-
-        <div className="hr pageRule" />
-
         <Reviews reviews={site.reviews} />
         <Location location={site.location} />
         <FinalCta finalCta={site.finalCta} />

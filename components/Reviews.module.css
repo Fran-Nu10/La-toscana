@@ -1,73 +1,102 @@
 .section {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: var(--section-y) var(--gutter);
+  background: var(--surface-2);
 }
 
 .head {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rating {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--bronze);
+}
+.star {
+  display: inline-grid;
 }
 
 .grid {
-  list-style: none;
-  margin: var(--block-gap) 0 0;
-  padding: 0;
-  display: grid;
-  border-top: 1px solid var(--color-divider);
-}
-
-/* Same ground as the page — the rules do the framing, not a fill. */
-.cell {
-  border-bottom: 1px solid var(--color-divider);
+  margin-top: var(--block-gap);
 }
 
 .card {
-  margin: 0;
-  padding: clamp(24px, 5.5vw, 36px) 0;
+  width: min(80vw, 340px);
 }
 
-.stars {
-  font-size: var(--fs-small);
-  letter-spacing: 3px;
-  color: var(--color-accent);
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+  padding: 24px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-xs);
+}
+
+.quoteMark {
+  color: var(--accent);
+  opacity: 0.8;
 }
 
 .quote {
-  margin: 12px 0 0;
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-size: clamp(1.1875rem, 3.2vw, 1.375rem);
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-variation-settings: 'opsz' 24, 'SOFT' 50;
+  font-size: var(--fs-h4);
   line-height: 1.4;
-  color: var(--color-neutral-800);
+  color: var(--ink);
   text-wrap: pretty;
-  /* Keeps the measure readable while the quotes are still stacked. */
-  max-width: 60ch;
 }
 
 .meta {
-  margin-top: 16px;
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  font: 500 var(--fs-micro) var(--font-body);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-neutral-600);
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: var(--accent-text);
+}
+.metaText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.name {
+  font: 600 var(--fs-small) var(--font-sans);
+}
+.source {
+  font-size: var(--fs-caption);
+  color: var(--ink-3);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 720px) {
   .grid {
+    display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .cell {
-    border-bottom: 1px solid var(--color-divider);
-    border-right: 1px solid var(--color-divider);
-  }
-  .cell:last-child {
-    border-right: 0;
+    gap: var(--card-gap);
+    overflow: visible;
+    padding-inline: 0;
+    margin-inline: 0;
+    scroll-snap-type: none;
   }
   .card {
-    padding: 36px 34px;
-    height: 100%;
+    width: auto;
   }
 }

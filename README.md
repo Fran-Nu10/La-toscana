@@ -2,10 +2,10 @@
 
 Sitio web de **La Toscana**, restaurante gastronómico en Florida, Uruguay.
 
-Una homepage editorial de scroll largo, pensada desde el celular: fotografía
-grande, tipografía con carácter y dos acciones claras — **pedir** y **reservar**.
-No es una app metida en una pantalla de teléfono ni una plantilla de restaurante:
-es una web responsive con identidad propia.
+Una web gastronómica contemporánea, pensada desde el celular: fotografía
+protagonista, tipografía con carácter y tres acciones claras — **pedir**,
+**reservar** y **contactar**. No es una plantilla de restaurante ni una app
+de delivery: es un storefront con identidad propia y un e-commerce completo.
 
 **Stack:** Next.js 15 (App Router) · React 19 · TypeScript · CSS Modules
 **Deploy:** Vercel · página estática (`○ prerendered as static content`)
@@ -27,14 +27,17 @@ npm run typecheck  # tsc --noEmit
 
 ## Qué hay en la página
 
-Una sola homepage, en este orden: barra de promo · header · hero · la
-experiencia · platos de la casa · la carta · formas de pedir · promos de la
-semana · reservas · eventos y celebraciones · galería · testimonios · ubicación ·
-cierre · footer.
+Una sola homepage, en este orden: header · hero · platos de la casa · la carta ·
+cómo pedir · la experiencia · promos de la semana · reservas · eventos ·
+galería · reseñas · ubicación · cierre · footer.
 
-El orden no es decorativo: primero el impacto, después la historia, después las
-dos cosas que la persona vino a hacer (pedir, reservar), y recién al final las
-pruebas y los datos prácticos.
+El orden no es decorativo: primero el impacto, después lo que se come y cómo
+pedirlo (quien llega desde Instagram o Maps casi siempre viene a comer), luego
+la historia y las razones para volver, y al final las pruebas y los datos
+prácticos.
+
+Fuera de la home: `/checkout` (finalizar pedido y confirmación) y
+`/pedido/[token]` (seguimiento), con su propio marco mínimo (`ShopShell`).
 
 ---
 
@@ -42,15 +45,12 @@ pruebas y los datos prácticos.
 
 | Carpeta | Qué hay |
 | --- | --- |
-| `app/` | `layout.tsx` (metadata + JSON-LD del restaurante), `page.tsx` (la homepage), `globals.css` (tokens y primitivas), `icon.svg` |
+| `app/` | `layout.tsx` (fuentes, metadata + JSON-LD), `page.tsx` (la homepage), `globals.css` (primitivas), rutas de checkout, pedido y admin |
 | `components/` | Una sección por archivo, cada una con su CSS Module al lado |
+| `components/shop/` | Tarjeta y hoja de producto, carrito, marco de las pantallas de compra, iconos |
 | `content/` | **Todo el texto, los precios y los datos de contacto** |
-| `styles/classical.css` | El design system, copiado tal cual desde su bundle |
+| `styles/tokens.css` | El design system: todos los tokens |
 | `public/fotos/` | Donde van las fotos reales |
-
-Sólo hidratan tres piezas en el cliente: el menú del header, el selector de
-categorías de la carta y el botón "cargar más platos". Todo lo demás es HTML
-estático.
 
 ---
 
@@ -64,7 +64,7 @@ en `content/types.ts`. Para los cambios del día a día no hace falta tocar nada
 | Un precio, un horario, el teléfono | `content/site.ts` |
 | Agregar un plato destacado | Un objeto más en `dishes.items` |
 | Agregar un plato a la carta | Un objeto más en la categoría de `menu.categories` |
-| La promo de la barra superior | `promoBar.text` (o `enabled: false` para apagarla) |
+| La promo destacada del hero | `promoBar.text` (o `enabled: false` para apagarla) |
 | Los mensajes de WhatsApp | La función `whatsapp()` arriba de `content/site.ts` |
 
 El botón **"cargar más platos"** se ajusta solo: muestra `dishes.initialCount` y
@@ -115,50 +115,59 @@ Cada foto declara además:
 
 ## Diseño
 
-El sistema visual es **Classical** (`styles/classical.css`): fondo claro casi
-neutro, Cormorant Garamond sobre Lora, filetes de 1px, botones delineados y fotos
-montadas como láminas (`.plate`). Ningún color, tipografía ni radio está escrito a
-mano — todo sale de `var(--*)`. Para actualizar el sistema, se vuelve a copiar ese
-archivo.
+La dirección visual es **restaurante contemporáneo premium**: marfil cálido de
+base, espresso como tinta, y acentos tomados de la cocina —terracota, oliva,
+vino, bronce— usados con moderación. Fotografía a sangre y con radio, sin
+marcos ni filetes; superficies con profundidad apenas perceptible.
+
+### Tipografía
+
+- **Fraunces** (serif) sólo para la marca, los titulares y las frases
+  editoriales.
+- **DM Sans** para toda la interfaz: navegación, precios, botones, formularios,
+  chips, carrito y checkout.
+
+Las dos se sirven desde el propio dominio con `next/font` (sin pedido a un
+tercero, sin salto de layout). La escala es fluida pero contenida: el display
+más grande no pasa de 72px.
+
+### Tokens
+
+`styles/tokens.css` es la única fuente de verdad: color, tipografía,
+espaciado, radios, sombras, foco y movimiento. `app/globals.css` construye
+encima las primitivas compartidas —`.btn` y sus variantes, `.chip`, `.badge`,
+`.input`, `.card`, `.frame`, `.notice`, `.rail`, `.kicker`, `.title`, `.lede`—
+y cada sección tiene su CSS Module sólo para su composición. Ningún componente
+escribe un color o un radio a mano.
+
+El panel de administración conserva su propio sistema
+(`components/admin/admin.module.css`) y sólo comparte la serif de marca.
 
 ### Mobile-first
 
-Las reglas base son las de 360–430px y los breakpoints **agregan**, no corrigen.
-Espaciado y tipografía son tokens fluidos (`clamp()`) definidos en `app/globals.css`:
-`--gutter`, `--section-y`, `--block-gap`, `--card-gap`, `--tap` (48px) y la escala
-`--fs-display … --fs-micro`.
+Las reglas base son las de 360–430px y los breakpoints **agregan**. Patrones
+propios del teléfono: rieles con scroll-snap (platos, promos, galería,
+reseñas), chips de categoría pegajosos en la carta, hoja inferior para el
+detalle de producto y para el carrito, y una barra flotante con el subtotal.
+Desde escritorio: header fijo con navegación, modal a dos columnas para el
+producto, panel lateral para el carrito, y resumen pegajoso en el checkout.
 
-Los breakpoints están donde el contenido los pide, no por dispositivo:
-
-- **600px** — entra una segunda columna
-- **900px** — se abren los spreads a dos columnas y aparece la navegación de escritorio
-- **1200px** — la grilla de platos pasa a cuatro
-
-Patrones propios del celular: rieles con **scroll-snap** en platos y galería (CSS
-nativo, sin librería de carrusel), **chips horizontales** para las categorías de la
-carta, y una **agenda** para las promos de la semana.
-
-Verificado a 360 / 390 / 430 / 600 / 768 / 1024 / 1280 / 1440 / 1920: sin scroll
-horizontal, sin elementos fuera del viewport, ningún control de menos de 40px de
-alto y ningún texto funcional por debajo de 11px.
+Verificado a 360 / 390 / 430 / 768 / 1024 / 1280 / 1440 / 1920: sin scroll
+horizontal y ningún control por debajo de 44px.
 
 ### Accesibilidad
 
-HTML semántico, un solo `h1` y jerarquía de encabezados sin saltos, `alt` en todas
-las fotos, skip link, y el anillo de foco del design system. La carta es un
-`tablist` navegable con flechas; el menú móvil bloquea el scroll, mueve el foco,
-cierra con `Escape`, lo devuelve al botón y queda `inert` mientras está cerrado.
+HTML semántico, un solo `h1`, `alt` en todas las fotos, skip link, foco
+visible con el mismo anillo en toda la web, diálogos con `role="dialog"`,
+foco atrapado y devuelto, `Escape` que cierra sólo la capa superior, y
+`prefers-reduced-motion` que apaga toda animación.
 
 ### Performance
 
-Sin librerías de animación ni de carrusel. Las animaciones usan sólo `transform` y
-`opacity`, y se apagan enteras con `prefers-reduced-motion`. Todo `:hover` está
-detrás de `@media (hover: hover)` para que no quede pegado después de un toque.
-Las imágenes van por `next/image` con `sizes` real y un marco con `aspect-ratio`
-fijo, así que el espacio queda reservado y no hay layout shift; sólo el hero es
-`priority`. Primer load: **~113 kB** de JavaScript, casi todo el runtime de Next.
-
----
+Sin librerías de animación ni de carrusel. Las animaciones usan sólo
+`transform` y `opacity`. Todo `:hover` está detrás de `@media (hover: hover)`.
+Las imágenes van por `next/image` con `sizes` real y marcos con
+`aspect-ratio`; sólo el hero es `priority`.
 
 ## Deploy
 

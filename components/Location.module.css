@@ -1,101 +1,124 @@
-.section {
-  background: var(--color-neutral-100);
-  border-top: 1px solid var(--color-divider);
-}
-
-.inner {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: var(--section-y) var(--gutter);
+.grid {
   display: flex;
   flex-direction: column;
-  gap: var(--block-gap);
+  gap: clamp(28px, 5vw, 48px);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .rows {
-  margin: clamp(22px, 5vw, 28px) 0 0;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--color-divider);
-}
-
-/* Label above value on a phone — a 110px label column would leave the value
-   with barely 30 characters at 360px. */
-.row {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 12px 2px;
-  border-bottom: 1px solid var(--color-divider);
-}
-
-.label {
-  font: 500 var(--fs-micro) var(--font-body);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-neutral-600);
-}
-
-.value {
-  margin: 0;
-  font-size: var(--fs-body);
-  color: var(--color-neutral-800);
-}
-
-/* The whole row reads as tappable where there is somewhere to go. */
-.valueLink {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  margin-block: -6px;
-  color: var(--color-accent-700);
-}
-
-.figure {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-}
-
-.plate {
-  aspect-ratio: 16 / 10;
-  width: 100%;
-  min-width: 0;
+  margin: clamp(16px, 3vw, 24px) 0 0;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
   overflow: hidden;
 }
 
-.mapLink {
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+.row:last-child {
+  border-bottom: 0;
+}
+.rowLink {
+  transition: background-color var(--dur-fast) ease;
+}
+.rowLink:active {
+  background: var(--surface-3);
+}
+
+.rowIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--accent-text);
+}
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.label {
+  font: 500 var(--fs-micro) var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.value {
+  margin: 0;
+  font: 500 var(--fs-body) / 1.3 var(--font-sans);
+}
+.rowGo {
+  margin-left: auto;
+  color: var(--ink-3);
+  transition: color var(--dur-fast) ease, transform var(--dur-fast) var(--ease);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: clamp(16px, 3vw, 24px);
+}
+.actions > * {
   width: 100%;
-  min-height: 52px;
 }
 
-@media (min-width: 520px) {
-  .row {
+.photo {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 560px) {
+  .actions {
     flex-direction: row;
-    align-items: baseline;
-    gap: 24px;
-    padding-block: 13px;
+    flex-wrap: wrap;
   }
-  .label {
-    width: 110px;
-    flex: none;
-  }
-  .mapLink {
+  .actions > * {
     width: auto;
-    min-width: 240px;
-    align-self: flex-start;
   }
 }
 
-@media (min-width: 900px) {
-  .inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(40px, 5vw, 56px);
+@media (min-width: 960px) {
+  .grid {
+    flex-direction: row;
     align-items: center;
+    gap: clamp(48px, 7vw, 112px);
   }
-  .plate {
-    aspect-ratio: 3 / 2;
+  .text {
+    flex: 1;
+    max-width: 520px;
+  }
+  .photo {
+    flex: 0 0 48%;
+    aspect-ratio: 4 / 4.2;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rowLink:hover {
+    background: var(--surface-2);
+  }
+  .rowLink:hover .rowGo {
+    color: var(--ink);
+    transform: translate(2px, -2px);
   }
 }

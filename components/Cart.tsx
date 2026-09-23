@@ -19,10 +19,8 @@ export function Cart() {
   const [editingKey, setEditingKey] = useState<string | null>(null)
   const drawerRef = useRef<HTMLElement>(null)
 
-  // El carrito se monta en el layout raíz, así que también caía sobre el panel:
-  // el dueño no compra desde el admin y el botón flotante tapaba los controles.
   // Fuera del panel y del checkout: en el admin el dueño no compra, y en el
-  // checkout el botón flotante tapaba el formulario y ya no lleva a ningún lado.
+  // checkout el botón flotante taparía el formulario.
   const pathname = usePathname()
   const hidden = Boolean(pathname?.startsWith('/admin') || pathname?.startsWith('/checkout'))
 
@@ -32,16 +30,11 @@ export function Cart() {
   return (
     <>
       {!hidden && <CartFab />}
-      {!hidden && cart.open && (
-        <CartDrawer
-          ref={drawerRef}
-          onEdit={setEditingKey}
-        />
-      )}
+      {!hidden && cart.open && <CartDrawer ref={drawerRef} onEdit={setEditingKey} />}
       {!hidden && <CartToast />}
 
       {/* Editar reabre exactamente el mismo detalle, con la configuración
-          cargada: no hay una segunda interfaz para lo mismo. */}
+          cargada, por encima del carrito. */}
       {editingLine && editingProduct && (
         <ProductSheet
           product={editingProduct}
@@ -57,7 +50,7 @@ export function Cart() {
   )
 }
 
-/** Botón flotante con el contador; late cada vez que entra algo al pedido. */
+/** Barra flotante con el conteo y el subtotal; late cada vez que entra algo. */
 function CartFab() {
   const cart = useCart()
   const [bump, setBump] = useState(false)
@@ -69,18 +62,18 @@ function CartFab() {
     return () => window.clearTimeout(timer)
   }, [cart.count])
 
-  if (!cart.count) return null
+  if (!cart.count || cart.open) return null
 
   return (
     <button
       type="button"
       className={`${styles.scope} ${styles.fab} ${bump ? styles.fabBump : ''}`}
       onClick={() => cart.setOpen(true)}
-      aria-label={`Abrir el pedido, ${cart.count} ${cart.count === 1 ? 'producto' : 'productos'}`}
+      aria-label={`Abrir el pedido, ${cart.count} ${cart.count === 1 ? 'producto' : 'productos'}, ${formatUyu(cart.total)}`}
     >
-      {ShopIcons.bag}
-      Ver pedido
-      <span className={styles.fabCount}>{cart.count}</span>
+      <span className={`${styles.fabCount} tnum`}>{cart.count}</span>
+      <span className={styles.fabLabel}>Ver pedido</span>
+      <span className={`${styles.fabTotal} tnum`}>{formatUyu(cart.total)}</span>
     </button>
   )
 }
@@ -126,7 +119,7 @@ function CartDrawer({
           </div>
           <button
             type="button"
-            className={styles.drawerClose}
+            className={`iconBtn ${styles.drawerClose}`}
             onClick={close}
             aria-label="Cerrar el pedido"
           >
@@ -140,17 +133,17 @@ function CartDrawer({
               <span className={styles.emptyMark}>{ShopIcons.bag}</span>
               <span className={styles.emptyTitle}>Todavía no elegiste nada</span>
               <p className={styles.emptyText}>
-                Mirá la carta y tocá cualquier plato para verlo y agregarlo a tu pedido.
+                Mirá la carta y tocá cualquier plato para verlo y sumarlo a tu pedido.
               </p>
-              <a href="#platos" className={styles.lineBtn} onClick={close} style={{ marginTop: 8 }}>
-                Ver los platos
+              <a href="#menu" className="btn btn--primary" onClick={close}>
+                Ver la carta
               </a>
             </div>
           </div>
         ) : (
           <div className={styles.lines}>
             {!settings.orderingOpen && (
-              <p className={`${styles.notice} ${styles.noticeWarn}`}>
+              <p className="notice notice--warn">
                 {ShopIcons.alert}
                 Ahora no estamos tomando pedidos. Podés dejarlo armado y enviarlo cuando abramos.
               </p>
@@ -165,7 +158,7 @@ function CartDrawer({
                 <article className={styles.line} key={line.key}>
                   <div className={styles.lineMedia}>
                     {photo ? (
-                      <Photo photo={photo} sizes="72px" />
+                      <Photo photo={photo} sizes="64px" />
                     ) : (
                       <div className={styles.mediaFallback} aria-hidden="true">
                         {ShopIcons.plate}
@@ -176,7 +169,7 @@ function CartDrawer({
                   <div className={styles.lineBody}>
                     <div className={styles.lineTop}>
                       <span className={styles.lineName}>{line.name}</span>
-                      <span className={styles.linePrice}>{formatUyu(lineTotal(line))}</span>
+                      <span className={`${styles.linePrice} tnum`}>{formatUyu(lineTotal(line))}</span>
                     </div>
 
                     {line.selections.length > 0 && (
@@ -193,7 +186,7 @@ function CartDrawer({
                     {line.notes && <p className={styles.lineNotes}>“{line.notes}”</p>}
 
                     {!stillAvailable && (
-                      <p className={`${styles.notice} ${styles.noticeWarn}`}>
+                      <p className="notice notice--warn">
                         {ShopIcons.alert}
                         Este plato ya no está disponible.
                       </p>
@@ -209,7 +202,7 @@ function CartDrawer({
                         >
                           {ShopIcons.minus}
                         </button>
-                        <span className={styles.lineQty}>{line.quantity}</span>
+                        <span className={`${styles.lineQty} tnum`}>{line.quantity}</span>
                         <button
                           type="button"
                           className={styles.lineStepperBtn}
@@ -220,11 +213,7 @@ function CartDrawer({
                         </button>
                       </div>
 
-                      <button
-                        type="button"
-                        className={styles.lineBtn}
-                        onClick={() => onEdit(line.key)}
-                      >
+                      <button type="button" className={styles.lineBtn} onClick={() => onEdit(line.key)}>
                         {ShopIcons.edit}
                         Editar
                       </button>
@@ -233,7 +222,9 @@ function CartDrawer({
                         type="button"
                         className={`${styles.lineBtn} ${styles.lineRemove}`}
                         onClick={() => cart.remove(line.key)}
+                        aria-label={`Quitar ${line.name} del pedido`}
                       >
+                        {ShopIcons.trash}
                         Quitar
                       </button>
                     </div>
@@ -247,19 +238,20 @@ function CartDrawer({
         {cart.lines.length > 0 && (
           <footer className={styles.drawerFoot}>
             {belowMinimum && (
-              <p className={`${styles.notice} ${styles.noticeInfo}`}>
+              <p className="notice">
                 {ShopIcons.alert}
-                Te faltan {formatUyu(missingAmount)} para llegar al mínimo de delivery. También
-                podés pasar a retirarlo.
+                Te faltan {formatUyu(missingAmount)} para el mínimo de delivery. También podés
+                pasar a retirarlo.
               </p>
             )}
             <div className={`${styles.totalRow} ${styles.totalGrand}`}>
               <span>Subtotal</span>
-              <strong>{formatUyu(cart.total)}</strong>
+              <span className="tnum">{formatUyu(cart.total)}</span>
             </div>
-            <p className={styles.ctaNote}>El costo de envío se calcula en el checkout.</p>
-            <Link href="/checkout" className={styles.cta} onClick={close}>
-              Continuar al checkout
+            <p className={styles.footNote}>El costo de envío se calcula al finalizar el pedido.</p>
+            <Link href="/checkout" className="btn btn--primary btn--lg btn--block" onClick={close}>
+              Continuar
+              {ShopIcons.arrow}
             </Link>
           </footer>
         )}
@@ -273,14 +265,20 @@ function CartToast() {
   const cart = useCart()
   const { flash, dismissFlash } = cart
 
+  // El toast se desmonta en el checkout; si vuelve a montarse con un aviso
+  // viejo (el id es su marca de tiempo), lo descarta en vez de mostrarlo.
   useEffect(() => {
     if (!flash) return
-    const timer = window.setTimeout(dismissFlash, 2000)
+    const remaining = 2000 - (Date.now() - flash.id)
+    if (remaining <= 0) {
+      dismissFlash()
+      return
+    }
+    const timer = window.setTimeout(dismissFlash, remaining)
     return () => window.clearTimeout(timer)
   }, [flash, dismissFlash])
 
-  // Con el panel abierto el cambio ya se ve en la lista; el toast sólo taparía
-  // el subtotal.
+  // Con el panel abierto el cambio ya se ve en la lista.
   if (!flash || cart.open) return null
 
   return (

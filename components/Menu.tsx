@@ -1,50 +1,195 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { SiteContent } from '@/content'
 import type { Product } from '@/data/types'
 import { formatUyu } from '@/lib/order'
+import { productPhoto } from '@/content/productPhotos'
 import { useCart } from './CartProvider'
 import { useCommerce } from './CommerceProvider'
-import styles from './Menu.module.css'
-import shop from './shop/shop.module.css'
+import { Photo } from './Photo'
 import { ShopIcons } from './shop/icons'
 import { ProductSheet } from './shop/ProductSheet'
+import styles from './Menu.module.css'
 
-function nextIndex(key: string, current: number, total: number) { if (key === 'ArrowDown' || key === 'ArrowRight') return (current + 1) % total; if (key === 'ArrowUp' || key === 'ArrowLeft') return (current - 1 + total) % total; if (key === 'Home') return 0; if (key === 'End') return total - 1; return null }
-/** Una fila de la carta: el botón ocupa la fila entera y abre el mismo detalle
- *  de producto que la tarjeta con foto. */
-function CartaRow({ product, onOpen }: { product: Product; onOpen(product: Product): void }) {
+/** Una fila de la carta: foto chica, nombre, descripción, precio y el `+`.
+ *  Toda la fila es el control y abre el mismo detalle que la tarjeta. */
+function MenuRow({ product, onOpen }: { product: Product; onOpen(product: Product): void }) {
+  const photo = productPhoto(product.id)
+  const options = product.options.length
   return (
     <li className={styles.item}>
       <button
         type="button"
-        className={shop.row}
+        className={styles.row}
         onClick={() => onOpen(product)}
         aria-label={`${product.name}, ${formatUyu(product.priceCents)}. Ver el plato`}
       >
-        <span className={styles.itemRow}>
-          <span className={styles.itemName}>{product.name}</span>
-          <span className={styles.leader} aria-hidden="true" />
-          <span className={`${styles.itemPrice} tnum`}>{formatUyu(product.priceCents)}</span>
-          <span className={styles.itemGo} aria-hidden="true">
-            {ShopIcons.plus}
-          </span>
+        <span className={styles.thumb} aria-hidden="true">
+          {photo ? (
+            <Photo photo={photo} sizes="88px" />
+          ) : (
+            <span className={styles.thumbFallback}>{ShopIcons.plate}</span>
+          )}
         </span>
-        {product.description && (
-          <span className={styles.itemDescription}>{product.description}</span>
-        )}
-        {product.options.length > 0 && (
-          <span className={styles.customize}>
-            {product.options.length} {product.options.length === 1 ? 'opción' : 'opciones'} a elección
+        <span className={styles.rowBody}>
+          <span className={styles.rowTop}>
+            <span className={styles.rowName}>{product.name}</span>
+            <span className={`${styles.rowPrice} tnum`}>{formatUyu(product.priceCents)}</span>
           </span>
-        )}
+          {product.description && (
+            <span className={styles.rowDescription}>{product.description}</span>
+          )}
+          {options > 0 && (
+            <span className={styles.rowMeta}>
+              {options === 1 ? 'Con opciones a elección' : `${options} opciones a elección`}
+            </span>
+          )}
+        </span>
+        <span className={styles.rowPlus} aria-hidden="true">
+          {ShopIcons.plus}
+        </span>
       </button>
     </li>
   )
 }
+
+/**
+ * La carta digital. Todas las categorías se leen de corrido —nadie tiene que
+ * "cambiar de pestaña" para ver qué hay— y un riel de chips pegajoso marca en
+ * qué categoría estás y salta a cualquier otra.
+ */
 export function Menu({ menu }: { menu: SiteContent['menu'] }) {
-  const commerce = useCommerce(); const cart = useCart(); const [openProduct, setOpenProduct] = useState<Product | null>(null); const visible = commerce.categories.filter(category => category.available && commerce.products.some(product => product.categoryId === category.id && product.available)); const [activeId, setActiveId] = useState<string>(); const active = visible.find(category => category.id === activeId) ?? visible[0]; const tabsRef = useRef<HTMLDivElement>(null)
-  function onKeyDown(event: React.KeyboardEvent, index: number) { const target = nextIndex(event.key, index, visible.length); if (target === null) return; event.preventDefault(); setActiveId(visible[target].id); tabsRef.current?.querySelector<HTMLButtonElement>(`#cat-${visible[target].id}`)?.focus() }
-  return <section id="menu" className={styles.section}><div className={styles.inner}><div className={styles.head}><p className="kicker kicker--dark">{menu.kicker}</p><h2 className="sectionTitle sectionTitle--dark">{menu.title}</h2><p className={styles.body}>{menu.body}</p><div className={styles.categories} role="tablist" aria-label="Categorías de la carta" ref={tabsRef}>{visible.map((category,index) => { const isActive=category.id===active?.id; return <button key={category.id} type="button" role="tab" id={`cat-${category.id}`} aria-selected={isActive} aria-controls="carta" tabIndex={isActive?0:-1} className={`${styles.category} ${isActive?styles.categoryActive:''}`} onClick={()=>setActiveId(category.id)} onKeyDown={event=>onKeyDown(event,index)}><span className={styles.categoryName}>{category.name}</span><span className={`${styles.categoryCount} tnum`}>{String(commerce.products.filter(product=>product.categoryId===category.id&&product.available).length).padStart(2,'0')}</span></button>})}</div></div>{active && <div className={styles.card} id="carta" role="tabpanel" aria-labelledby={`cat-${active.id}`}><div className={styles.cardHead}><span className={styles.cardTitle}>{active.name}</span><span className={styles.cardMark}>La Toscana</span></div><ul className={styles.items}>{commerce.products.filter(product=>product.categoryId===active.id&&product.available).map(product=><CartaRow product={product} onOpen={setOpenProduct} key={product.id}/>)}</ul></div>}</div>{openProduct && <ProductSheet product={openProduct} orderingOpen={commerce.settings.orderingOpen} onClose={() => setOpenProduct(null)} onConfirm={(selections, quantity, notes) => cart.add(openProduct, selections, quantity, notes, false)} />}</section>
+  const commerce = useCommerce()
+  const cart = useCart()
+  const [openProduct, setOpenProduct] = useState<Product | null>(null)
+  const [activeId, setActiveId] = useState<string>()
+  const railRef = useRef<HTMLDivElement>(null)
+
+  const groups = useMemo(
+    () =>
+      commerce.categories
+        .filter((category) => category.available)
+        .map((category) => ({
+          category,
+          products: commerce.products.filter(
+            (product) => product.categoryId === category.id && product.available,
+          ),
+        }))
+        .filter((group) => group.products.length > 0),
+    [commerce.categories, commerce.products],
+  )
+
+  const active = activeId ?? groups[0]?.category.id
+
+  // Scrollspy: la categoría que cruza el tercio superior de la pantalla manda.
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined' || groups.length === 0) return
+    const nodes = groups
+      .map((group) => document.getElementById(`carta-${group.category.id}`))
+      .filter((node): node is HTMLElement => Boolean(node))
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const hit = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]
+        if (hit) setActiveId(hit.target.id.replace('carta-', ''))
+      },
+      { rootMargin: '-35% 0px -55% 0px', threshold: 0 },
+    )
+    nodes.forEach((node) => observer.observe(node))
+    return () => observer.disconnect()
+  }, [groups])
+
+  // El chip activo se mantiene a la vista dentro del riel.
+  useEffect(() => {
+    if (!active || !railRef.current) return
+    const chip = railRef.current.querySelector<HTMLElement>(`[data-id="${active}"]`)
+    if (!chip) return
+    const rail = railRef.current
+    const left = chip.offsetLeft - rail.clientWidth / 2 + chip.clientWidth / 2
+    rail.scrollTo({ left, behavior: 'smooth' })
+  }, [active])
+
+  const jump = (id: string) => {
+    setActiveId(id)
+    document.getElementById(`carta-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  return (
+    <section id="menu" className={styles.section}>
+      <div className={`container ${styles.head}`}>
+        <div className="sectionHead">
+          <p className="kicker">{menu.kicker}</p>
+          <h2 className="title">{menu.title}</h2>
+          <p className="lede">{menu.body}</p>
+        </div>
+      </div>
+
+      {groups.length === 0 ? (
+        <div className="container">
+          <p className={`notice ${styles.empty}`}>
+            {ShopIcons.alert}
+            La carta se está actualizando. Volvé a mirar en un rato.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className={styles.sticky}>
+            <div className={`container ${styles.railWrap}`}>
+              <div
+                className={`rail ${styles.rail}`}
+                ref={railRef}
+                role="navigation"
+                aria-label="Categorías de la carta"
+              >
+                {groups.map(({ category, products }) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    data-id={category.id}
+                    className="chip"
+                    aria-current={active === category.id ? 'true' : undefined}
+                    onClick={() => jump(category.id)}
+                  >
+                    {category.name}
+                    <span className={`${styles.chipCount} tnum`}>{products.length}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className={`container ${styles.groups}`}>
+            {groups.map(({ category, products }) => (
+              <div key={category.id} id={`carta-${category.id}`} className={styles.group}>
+                <div className={styles.groupHead}>
+                  <h3 className={styles.groupTitle}>{category.name}</h3>
+                  <span className={styles.groupCount}>
+                    {products.length} {products.length === 1 ? 'plato' : 'platos'}
+                  </span>
+                </div>
+                <ul className={styles.items}>
+                  {products.map((product) => (
+                    <MenuRow product={product} onOpen={setOpenProduct} key={product.id} />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {openProduct && (
+        <ProductSheet
+          product={openProduct}
+          orderingOpen={commerce.settings.orderingOpen}
+          onClose={() => setOpenProduct(null)}
+          onConfirm={(selections, quantity, notes) =>
+            cart.add(openProduct, selections, quantity, notes, false)
+          }
+        />
+      )}
+    </section>
+  )
 }

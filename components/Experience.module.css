@@ -1,94 +1,92 @@
-.section {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: var(--section-y-lg) var(--gutter) var(--section-y);
-}
-
 .grid {
   display: flex;
   flex-direction: column;
-  gap: var(--block-gap);
+  gap: clamp(36px, 7vw, 64px);
+}
+
+.photos {
+  position: relative;
+  width: 100%;
+  /* El bloque reserva la altura de la foto grande más el solape. */
+  padding-bottom: 12%;
+}
+
+.photoMain {
+  width: 88%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.photoSmall {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 44%;
+  aspect-ratio: 1;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  outline: 6px solid var(--bg);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .body {
-  margin: 18px 0 0;
-  font-size: var(--fs-small);
-  line-height: var(--lh-body);
-  color: var(--color-neutral-700);
-  max-width: 54ch;
-  /* Justified copy needs a wide measure to avoid rivers; on a phone it stays
-     ragged-right, which is the readable setting at this width. */
-  text-align: left;
+  margin-top: 6px;
 }
 
-/* Three figures reading as one line of proof, not three cards. */
 .stats {
-  margin: clamp(26px, 6vw, 34px) 0 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  border-top: 1px solid var(--color-divider);
-  padding-top: 20px;
+  margin: clamp(24px, 4vw, 36px) 0 0;
 }
 
 .stat {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  gap: 4px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line-strong);
 }
-
 .statValue {
-  font-family: var(--font-heading);
-  font-size: clamp(1.75rem, 6vw, 2.125rem);
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 96, 'SOFT' 30;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   line-height: 1;
-  color: var(--color-accent-700);
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
-
 .statLabel {
-  font: 500 var(--fs-micro) var(--font-body);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-neutral-600);
-  text-wrap: balance;
+  font: 500 var(--fs-caption) var(--font-sans);
+  color: var(--ink-3);
 }
 
-/* The photographs: a stacked pair on a phone, staggered from 900px. */
-.photos {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(10px, 2.5vw, 16px);
-  min-width: 0;
-}
-
-.plate {
-  aspect-ratio: 3 / 4;
-  min-width: 0;
-  overflow: hidden;
-}
-
-@media (min-width: 600px) {
-  .body {
-    text-align: justify;
-    hyphens: auto;
-  }
-  .stats {
-    gap: 24px;
-  }
-}
-
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(40px, 5vw, 56px);
+    flex-direction: row;
     align-items: center;
+    gap: clamp(48px, 7vw, 112px);
   }
-  .plate {
-    aspect-ratio: 4 / 5;
+  .photos {
+    flex: 0 0 48%;
+    padding-bottom: 10%;
   }
-  /* The stagger that keeps the pair from reading as a single band. */
-  .plateOffset {
-    margin-top: 34px;
+  .photoMain {
+    width: 82%;
+  }
+  .photoSmall {
+    width: 46%;
+    outline-width: 8px;
+  }
+  .text {
+    flex: 1;
+    max-width: 520px;
   }
 }

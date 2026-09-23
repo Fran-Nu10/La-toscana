@@ -34,8 +34,8 @@ export const site: SiteContent = {
   },
 
   nav: [
+    { label: 'Carta', href: '#menu' },
     { label: 'Experiencia', href: '#experiencia' },
-    { label: 'Menú', href: '#menu' },
     { label: 'Promos', href: '#promos' },
     { label: 'Eventos', href: '#eventos' },
     { label: 'Galería', href: '#galeria' },
@@ -45,9 +45,9 @@ export const site: SiteContent = {
   hero: {
     /* Las cuatro respuestas de la primera pantalla: qué es, qué se come,
        cuándo abre y dónde queda. */
-    kicker: 'Restaurante gastronómico',
-    title: 'La Toscana',
-    subtitle: 'Pastas caseras, pizza a la piedra y parrilla.',
+    kicker: 'Restaurante gastronómico · Florida',
+    title: 'Cocina italiana con alma de casa',
+    subtitle: 'Pastas hechas cada mañana, pizza a la piedra y parrilla, en un salón pensado para quedarse.',
     tagline: 'Más que un plato, creamos experiencias únicas.',
     /* Pedir lidera, reservar acompaña — el mismo orden en toda la página. */
     primaryCta: { label: 'Pedir ahora', href: '#menu' },
@@ -71,7 +71,7 @@ export const site: SiteContent = {
 
   dishes: {
     title: 'Platos de la casa',
-    menuLinkLabel: 'Menú completo',
+    menuLinkLabel: 'Ver toda la carta',
     initialCount: 8,
     step: 4,
     loadMoreLabel: 'Cargar más platos',
@@ -164,9 +164,9 @@ export const site: SiteContent = {
   },
 
   menu: {
-    kicker: 'El menú',
-    title: 'Como una carta impresa, pero viva',
-    body: 'Elegí una categoría para espiar la carta. Todo se cocina en el día, con productos de la zona.',
+    kicker: 'La carta',
+    title: 'Qué hay para comer',
+    body: 'Tocá un plato para verlo, elegir opciones y sumarlo a tu pedido. Todo se cocina en el día, con productos de la zona.',
     downloadLabel: 'Descargar menú completo',
     downloadHref: '#menu',
     categories: [
@@ -249,7 +249,7 @@ export const site: SiteContent = {
   },
 
   order: {
-    kicker: 'Pedí como quieras',
+    kicker: 'Cómo pedir',
     title: 'La Toscana en tu mesa',
     ways: [
       {
@@ -280,8 +280,8 @@ export const site: SiteContent = {
   },
 
   promos: {
-    title: 'La semana en La Toscana',
-    subtitle: 'Cada noche tiene su excusa',
+    title: 'Cada noche tiene su excusa',
+    subtitle: 'La semana en La Toscana',
     items: [
       {
         id: 'martes',
@@ -372,7 +372,7 @@ export const site: SiteContent = {
 
   location: {
     kicker: 'Visitanos',
-    title: 'Florida, Uruguay',
+    title: 'Te esperamos en Florida',
     rows: [
       {
         label: 'Dirección',
@@ -394,9 +394,9 @@ export const site: SiteContent = {
 
   finalCta: {
     kicker: '¿Cenamos?',
-    title: 'Descubrí momentos inolvidables',
-    primaryCta: { label: 'Reservar', href: '#reservas' },
-    secondaryCta: { label: 'Pedir ahora', href: '#menu' },
+    title: 'Esta noche, La Toscana',
+    primaryCta: { label: 'Pedir ahora', href: '#menu' },
+    secondaryCta: { label: 'Reservar mesa', href: '#reservas' },
   },
 
   footer: {
@@ -404,6 +404,7 @@ export const site: SiteContent = {
     contactHeading: 'Contacto',
     hoursHeading: 'Horarios',
     legal: '© 2026 La Toscana · Florida, Uruguay',
-    colophon: 'Diseño editorial · hecho con cariño',
+    colophon: 'Cocina italiana, hecha en casa',
+    adminLabel: 'Acceso restaurante',
   },
 }

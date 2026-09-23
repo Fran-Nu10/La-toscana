@@ -113,6 +113,7 @@ export interface SiteContent {
   nav: NavLink[]
   hero: {
     kicker: string
+    /** Titular serif. Cabe en tres líneas a 390px; la marca vive en el header. */
     title: string
     /** One line saying what this place is — the first question a visitor
      *  arriving from Instagram or Google needs answered. */
@@ -206,5 +207,7 @@ export interface SiteContent {
     hoursHeading: string
     legal: string
     colophon: string
+    /** Acceso discreto al panel del restaurante, al pie de todo. */
+    adminLabel: string
   }
 }

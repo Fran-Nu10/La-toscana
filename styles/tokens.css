@@ -1,0 +1,138 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   La Toscana — design tokens
+   Una sola fuente de verdad para color, tipografía, espaciado, radios,
+   sombras y movimiento. Nada en los componentes usa un valor suelto: todo
+   resuelve a una de estas variables.
+
+   Dirección: cálido, italiano, contemporáneo. Marfil de base, espresso como
+   tinta, y acentos tomados de la cocina — terracota, oliva, vino, bronce —
+   usados con mucha moderación.
+   ════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Color: superficies ─────────────────────────────────────────────── */
+  --bg: #f5efe4;          /* marfil cálido: el fondo de la página */
+  --bg-deep: #ede5d6;     /* un paso más profundo, para bandas y rieles */
+  --surface: #fffcf7;     /* blanco cálido: tarjetas, hojas, inputs */
+  --surface-2: #f8f3ea;   /* superficie secundaria dentro de una tarjeta */
+  --surface-3: #efe7d9;   /* chips, pistas, fondos de control */
+
+  /* ── Color: tinta ───────────────────────────────────────────────────── */
+  --ink: #1d1814;         /* espresso: texto principal */
+  --ink-2: #4f4640;       /* texto secundario (7.6:1 sobre --bg) */
+  --ink-3: #79706a;       /* meta, ayudas (4.6:1 sobre --bg) */
+  --ink-4: #a49b93;       /* sólo decorativo, nunca texto funcional */
+
+  /* ── Color: líneas ──────────────────────────────────────────────────── */
+  --line: rgba(29, 24, 20, 0.09);
+  --line-strong: rgba(29, 24, 20, 0.18);
+
+  /* ── Color: acentos gastronómicos ───────────────────────────────────── */
+  --terracotta: #b8532e;
+  --terracotta-deep: #8f3d1f;  /* 6.1:1 sobre --bg: apto para texto */
+  --terracotta-soft: rgba(184, 83, 46, 0.1);
+  --olive: #55613a;
+  --olive-deep: #3f4a2a;
+  --olive-soft: rgba(85, 97, 58, 0.12);
+  --wine: #7a2f3b;
+  --wine-soft: rgba(122, 47, 59, 0.1);
+  --bronze: #a3773d;
+  --bronze-soft: rgba(163, 119, 61, 0.14);
+
+  /* Semánticos */
+  --accent: var(--terracotta);
+  --accent-text: var(--terracotta-deep);
+  --accent-soft: var(--terracotta-soft);
+  --ok: var(--olive-deep);
+  --ok-soft: var(--olive-soft);
+  --danger: var(--wine);
+  --danger-soft: var(--wine-soft);
+
+  /* ── Color: tema oscuro (bandas espresso: cierre, footer) ───────────── */
+  --dark-bg: #1c1714;
+  --dark-bg-2: #26201b;
+  --dark-surface: rgba(255, 250, 242, 0.06);
+  --dark-ink: #f4ede1;
+  --dark-ink-2: rgba(244, 237, 225, 0.72);
+  --dark-ink-3: rgba(244, 237, 225, 0.52);
+  --dark-line: rgba(244, 237, 225, 0.14);
+  --dark-accent: #e0a26a;   /* bronce claro sobre espresso: 8.4:1 */
+
+  /* ── Tipografía ─────────────────────────────────────────────────────── */
+  /* next/font define --font-fraunces y --font-dm-sans en <html>; los
+     fallbacks quedan por si algún día se sirven de otra forma. */
+  --font-serif: var(--font-fraunces, 'Fraunces'), 'Iowan Old Style', 'Palatino Linotype', Georgia,
+    serif;
+  --font-sans: var(--font-dm-sans, 'DM Sans'), ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Escala fluida: contenida. El display más grande nunca supera 72px. */
+  --fs-display: clamp(2.375rem, 2.2vw + 1.75rem, 4.5rem);   /* 38 → 72 */
+  --fs-h1: clamp(2.125rem, 1.8vw + 1.5rem, 3.5rem);        /* 34 → 56 */
+  --fs-h2: clamp(1.875rem, 1.4vw + 1.35rem, 2.875rem);     /* 30 → 46 */
+  --fs-h3: clamp(1.375rem, 0.5vw + 1.2rem, 1.75rem);       /* 22 → 28 */
+  --fs-h4: clamp(1.125rem, 0.3vw + 1.05rem, 1.3125rem);    /* 18 → 21 */
+  --fs-lead: clamp(1.0625rem, 0.4vw + 0.95rem, 1.25rem);   /* 17 → 20 */
+  --fs-body: 1rem;                                          /* 16 */
+  --fs-small: 0.9375rem;                                    /* 15 */
+  --fs-caption: 0.8125rem;                                  /* 13 */
+  --fs-micro: 0.75rem;                                      /* 12 — el mínimo */
+
+  --lh-display: 1;
+  --lh-heading: 1.08;
+  --lh-tight: 1.25;
+  --lh-body: 1.6;
+
+  --tracking-caps: 0.12em;
+
+  /* ── Espaciado ──────────────────────────────────────────────────────── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  --page-max: 1280px;
+  --page-wide: 1440px;
+  --gutter: clamp(16px, 4.5vw, 40px);
+  --section-y: clamp(56px, 7vw, 104px);
+  --block-gap: clamp(24px, 4vw, 40px);
+  --card-gap: clamp(12px, 2vw, 24px);
+  --tap: 44px;
+  --tap-lg: 52px;
+  --header-h: 64px;
+
+  /* ── Radios ─────────────────────────────────────────────────────────── */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ── Sombras: tintadas con la tinta, muy sutiles ────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(29, 24, 20, 0.06);
+  --shadow-sm: 0 1px 2px rgba(29, 24, 20, 0.05), 0 4px 12px rgba(29, 24, 20, 0.06);
+  --shadow-md: 0 2px 6px rgba(29, 24, 20, 0.06), 0 12px 32px rgba(29, 24, 20, 0.1);
+  --shadow-lg: 0 8px 24px rgba(29, 24, 20, 0.12), 0 28px 64px rgba(29, 24, 20, 0.18);
+  --shadow-sheet: 0 -12px 48px rgba(29, 24, 20, 0.22);
+
+  /* ── Foco ───────────────────────────────────────────────────────────── */
+  --focus-ring: 0 0 0 3px var(--bg), 0 0 0 5px var(--terracotta);
+
+  /* ── Movimiento ─────────────────────────────────────────────────────── */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --dur-fast: 160ms;
+  --dur: 280ms;
+  --dur-slow: 560ms;
+
+  /* ── Compatibilidad con el panel de administración ──────────────────── */
+  --font-heading: var(--font-serif);
+  --font-body: var(--font-sans);
+}

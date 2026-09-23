@@ -1,1 +1,296 @@
-.shell{max-width:760px;min-height:100vh;margin:auto;padding:var(--section-y) var(--gutter)}.shell h1{font-size:var(--fs-h1-sm);text-transform:uppercase;margin:14px 0}.current{font-family:var(--font-heading);font-size:2rem;color:var(--color-accent-700)}.timeline{list-style:none;padding:0;margin:36px 0}.timeline li{display:flex;align-items:center;gap:14px;min-height:48px;color:var(--color-neutral-600)}.timeline span{width:18px;height:18px;border:1px solid var(--color-neutral-500);border-radius:50%}.timeline .done{color:var(--color-text)}.timeline .done span{background:var(--color-accent-700);border-color:var(--color-accent-700)}.shell section{border:1px solid var(--color-border);padding:22px;margin-bottom:28px}.cancelled{padding:16px;border:1px solid #8b1e1e;color:#8b1e1e}
+.state {
+  color: var(--ink-3);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: clamp(20px, 3vw, 28px);
+}
+.title {
+  font-size: var(--fs-h1);
+}
+
+/* ── Estado actual ───────────────────────────────────────────────────────── */
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(20px, 3vw, 28px);
+  background: var(--dark-bg);
+  border-color: var(--dark-bg);
+  color: var(--dark-ink);
+  animation: fadeUp var(--dur-slow) var(--ease) both;
+}
+.statusCancelled {
+  background: var(--wine);
+  border-color: var(--wine);
+}
+.statusDone {
+  background: var(--olive-deep);
+  border-color: var(--olive-deep);
+}
+
+.statusTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.statusPulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dark-accent);
+  box-shadow: 0 0 0 0 rgba(224, 162, 106, 0.5);
+  animation: pulse 2s ease-out infinite;
+}
+.statusDone .statusPulse,
+.statusCancelled .statusPulse {
+  animation: none;
+  background: var(--dark-ink);
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(224, 162, 106, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(224, 162, 106, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(224, 162, 106, 0);
+  }
+}
+.statusLabel {
+  font: 600 var(--fs-micro) var(--font-sans);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--dark-ink-3);
+}
+.statusName {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 96, 'SOFT' 30;
+  font-size: var(--fs-h1);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.statusDetail {
+  font-size: var(--fs-small);
+  color: var(--dark-ink-2);
+  max-width: 44ch;
+}
+
+/* ── Línea de tiempo ─────────────────────────────────────────────────────── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--dark-line);
+}
+
+.stepItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  color: var(--dark-ink-3);
+}
+/* La línea que une los puntos. */
+.stepItem::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--dark-line);
+}
+.stepItem:first-child::before {
+  top: 50%;
+}
+.stepItem:last-child::before {
+  bottom: 50%;
+}
+.stepItem[data-state='done']::before {
+  background: var(--dark-accent);
+}
+.stepItem[data-state='current']::before {
+  background: linear-gradient(to bottom, var(--dark-accent) 50%, var(--dark-line) 50%);
+}
+
+.stepDot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--dark-line);
+  background: var(--dark-bg);
+  color: var(--ink);
+  transition: background-color var(--dur) ease, border-color var(--dur) ease;
+}
+.statusDone .stepDot {
+  background: var(--olive-deep);
+}
+.stepItem[data-state='done'] .stepDot {
+  background: var(--dark-accent);
+  border-color: var(--dark-accent);
+}
+.stepItem[data-state='current'] .stepDot {
+  border-color: var(--dark-accent);
+  box-shadow: 0 0 0 4px rgba(224, 162, 106, 0.2);
+}
+.stepItem[data-state='current'] .stepDot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dark-accent);
+}
+
+.stepLabel {
+  font: 500 var(--fs-small) var(--font-sans);
+}
+.stepItem[data-state='done'] .stepLabel {
+  color: var(--dark-ink-2);
+}
+.stepItem[data-state='current'] .stepLabel {
+  color: var(--dark-ink);
+  font-weight: 600;
+}
+
+/* ── Resumen ─────────────────────────────────────────────────────────────── */
+.summary {
+  margin-top: 16px;
+  padding: clamp(18px, 3vw, 24px);
+}
+.summaryTitle {
+  font-size: var(--fs-h4);
+  margin-bottom: 8px;
+}
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-small);
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lineQty {
+  color: var(--ink-3);
+}
+.lineMeta {
+  color: var(--ink-3);
+}
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0 0;
+  font-size: var(--fs-small);
+}
+.facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.facts dt {
+  color: var(--ink-3);
+}
+.facts dd {
+  margin: 0;
+  text-align: right;
+}
+.total {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-strong);
+  font: 600 var(--fs-h4) var(--font-sans);
+}
+.total dt {
+  color: var(--ink);
+}
+
+.help {
+  margin-top: 20px;
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--ink-3);
+}
+
+/* ── No encontrado ───────────────────────────────────────────────────────── */
+.missing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: clamp(32px, 6vw, 56px) 24px;
+}
+.missingMark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.missingTitle {
+  font-size: var(--fs-h3);
+}
+.missingText {
+  max-width: 38ch;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+
+/* ── Escritorio: la línea de tiempo se acuesta ───────────────────────────── */
+@media (min-width: 640px) {
+  .timeline {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .stepItem {
+    flex: 1;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    text-align: center;
+  }
+  .stepItem::before {
+    left: 0;
+    right: 0;
+    top: 11px;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+  .stepItem:first-child::before {
+    top: 11px;
+    left: 50%;
+  }
+  .stepItem:last-child::before {
+    bottom: auto;
+    right: 50%;
+  }
+  .stepItem[data-state='current']::before {
+    background: linear-gradient(to right, var(--dark-accent) 50%, var(--dark-line) 50%);
+  }
+  .stepLabel {
+    font-size: var(--fs-caption);
+  }
+}

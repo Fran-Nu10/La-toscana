@@ -1,116 +1,127 @@
 .section {
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: var(--section-y) var(--gutter);
+  background: var(--bg-deep);
+  padding-block: calc(var(--section-y) * 0.8);
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-gap);
 }
 
 .head {
-  max-width: 640px;
+  max-width: 30ch;
 }
 
 .ways {
-  list-style: none;
-  margin: var(--block-gap) 0 0;
-  padding: 0;
   display: grid;
-  border: 1px solid var(--color-divider);
+  gap: 12px;
 }
 
 .way {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  padding: clamp(24px, 5.5vw, 38px) clamp(20px, 4.5vw, 32px);
-  border-bottom: 1px solid var(--color-divider);
-  transition: background-color var(--dur) ease;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'icon text'
+    'icon cta';
+  column-gap: 16px;
+  row-gap: 12px;
+  align-items: start;
+  min-height: 100%;
+  padding: 20px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-xs);
+  color: var(--ink);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) ease,
+    border-color var(--dur-fast) ease;
 }
-.way:last-child {
-  border-bottom: 0;
+.way:active {
+  transform: scale(0.99);
+}
+
+.icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+  color: var(--accent-text);
 }
 
 .text {
+  grid-area: text;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
-
-.index {
-  font-family: var(--font-heading);
-  font-size: clamp(1.75rem, 7vw, 2.5rem);
-  line-height: 1;
-  color: var(--color-accent-700);
-}
-
 .name {
-  margin: 0;
-  font-size: var(--fs-h3);
-  line-height: 1.1;
-  text-transform: uppercase;
+  font: 600 var(--fs-h4) / 1.2 var(--font-sans);
 }
-
 .description {
-  margin: 0;
   font-size: var(--fs-small);
-  line-height: 1.6;
-  color: var(--color-neutral-700);
-  max-width: 42ch;
+  line-height: 1.5;
+  color: var(--ink-2);
 }
 
 .cta {
-  margin-top: 8px;
-  width: 100%;
-  min-height: 52px;
+  grid-area: cta;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  font: 600 var(--fs-small) var(--font-sans);
+  color: var(--accent-text);
+}
+.cta svg {
+  transition: transform var(--dur-fast) var(--ease);
 }
 
-@media (min-width: 480px) {
-  .cta {
-    width: auto;
-    min-width: 220px;
-  }
-}
-
-/* Tablet: a full-width block with a short paragraph leaves half the row empty,
-   so the row turns horizontal — number, text, and the action on the right. */
-@media (min-width: 620px) and (max-width: 899px) {
-  .way {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    column-gap: clamp(20px, 3vw, 32px);
-    row-gap: 0;
-  }
-  .cta {
-    margin-top: 0;
-  }
-}
-
-/* Three columns once each one still has room to breathe. */
-@media (min-width: 900px) {
-  .head {
-    text-align: center;
-    margin-inline: auto;
-  }
+@media (min-width: 720px) {
   .ways {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--card-gap);
   }
   .way {
-    border-bottom: 0;
-    border-right: 1px solid var(--color-divider);
-  }
-  /* The last column would otherwise double up with the container's own edge. */
-  .way:last-child {
-    border-right: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'icon'
+      'text'
+      'cta';
+    row-gap: 18px;
+    padding: 24px;
   }
   .cta {
     margin-top: auto;
-    width: 100%;
-    min-width: 0;
+  }
+}
+
+@media (min-width: 1100px) {
+  .grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: clamp(40px, 6vw, 96px);
+  }
+  .head {
+    flex: 0 0 300px;
+    position: sticky;
+    top: calc(var(--header-h) + 24px);
+  }
+  .ways {
+    flex: 1;
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .way:hover {
-    background: var(--color-accent-100);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+  }
+  .way:hover .cta svg {
+    transform: translateX(3px);
   }
 }
