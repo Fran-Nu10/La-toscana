@@ -1,4 +1,4 @@
-import { photos } from './photos'
+import { photos, real } from './photos'
 import type { SiteContent } from './types'
 
 const WHATSAPP_NUMBER = '59893379047'
@@ -29,8 +29,9 @@ export const site: SiteContent = {
 
   promoBar: {
     enabled: true,
-    /* Corto a propósito: entra en una línea en un teléfono de 360px. */
-    text: 'Jueves · Picada para dos + copa de Tannat',
+    /* Respaldo del chip del hero cuando hoy no hay promo (el chip muestra la
+       promo del día cuando es martes, miércoles o jueves). */
+    text: 'Martes a jueves · promos con refresco de regalo',
   },
 
   nav: [
@@ -45,16 +46,18 @@ export const site: SiteContent = {
   hero: {
     /* Las cuatro respuestas de la primera pantalla: qué es, qué se come,
        cuándo abre y dónde queda. */
-    kicker: 'Restaurante gastronómico · Florida',
-    title: 'Cocina italiana con alma de casa',
-    subtitle: 'Pastas hechas cada mañana, pizza a la piedra y parrilla, en un salón pensado para quedarse.',
+    kicker: 'Restaurante · Parrilla · Florida',
+    title: 'Parrilla, pastas y sobremesa larga',
+    subtitle: 'Carnes a la leña, pastas caseras y pizza en un salón cálido de Florida. Para compartir acá o pedir a casa.',
     tagline: 'Más que un plato, creamos experiencias únicas.',
     /* Pedir lidera, reservar acompaña — el mismo orden en toda la página. */
     primaryCta: { label: 'Pedir ahora', href: '#menu' },
     secondaryCta: { label: 'Reservar mesa', href: '#reservas' },
     metaLeft: 'Martes a domingo · 20:00 – 00:30',
     metaRight: 'Florida · Uruguay',
-    photo: photos.hero,
+    photo: real.milanesa,
+    photoCaption: 'Recién salida de la cocina',
+    secondaryPhoto: real.trago,
   },
 
   experience: {
@@ -66,7 +69,30 @@ export const site: SiteContent = {
       { value: '6.000', label: 'Seguidores' },
       { value: '100%', label: 'Pasta casera' },
     ],
-    photos: [photos.experienceRoom, photos.experienceKitchen],
+    photos: [real.parrillero, real.asado],
+    photoCaption: 'La parrilla, a la leña',
+  },
+
+  film: {
+    kicker: 'Desde adentro',
+    title: 'Un día en La Toscana',
+    body: 'El fuego encendido, la parrilla cargada, los tragos saliendo de la barra y el salón lleno. Así se ve una noche en Florida.',
+    caption: 'Parrilla a leña · asado de tira · tragos · salón',
+    description:
+      'Video sin sonido: copas frente al fuego, el parrillero trabajando la leña, asado de tira en la parrilla, tragos frutales, el salón con clientes, un brasero frente al cartel de La Toscana y platos de la casa.',
+    sources: [
+      { src: '/media/video/un-dia-en-la-toscana-720.webm', type: 'video/webm; codecs="vp9"' },
+      { src: '/media/video/un-dia-en-la-toscana-720.mp4', type: 'video/mp4; codecs="avc1.640028"' },
+    ],
+    ambientSources: [
+      { src: '/media/video/un-dia-en-la-toscana-ambient.webm', type: 'video/webm; codecs="vp9"' },
+      { src: '/media/video/un-dia-en-la-toscana-ambient.mp4', type: 'video/mp4; codecs="avc1.4d400c"' },
+    ],
+    poster: '/media/video/un-dia-en-la-toscana-poster.jpg',
+    ambientPoster: '/media/video/un-dia-en-la-toscana-ambient.jpg',
+    width: 720,
+    height: 1280,
+    cta: { label: 'Reservar mesa', href: '#reservas' },
   },
 
   dishes: {
@@ -280,32 +306,48 @@ export const site: SiteContent = {
   },
 
   promos: {
-    title: 'Cada noche tiene su excusa',
-    subtitle: 'La semana en La Toscana',
+    kicker: 'Promos de la semana',
+    title: 'Tres noches, tres promos',
+    body: 'Todas llevan un refresco de 1 litro de regalo y son sólo por delivery. Pedilas por WhatsApp.',
     items: [
       {
         id: 'martes',
         day: 'Martes',
-        name: 'Pizza + copa',
-        description: 'Pizza a la piedra con copa de vino de la casa.',
+        weekday: 2,
+        name: 'Gramajo para 2',
+        description: 'Gramajo para compartir con refresco de 1 L de regalo.',
+        condition: 'Sólo delivery',
+        flyer: real.promoMartes,
+        cta: {
+          label: 'Pedir la promo',
+          href: whatsapp('¡Hola La Toscana! Quiero la Promo Martes: gramajo para 2 con refresco de regalo.'),
+        },
       },
       {
         id: 'miercoles',
         day: 'Miércoles',
-        name: 'Hamburguesa La Toscana',
-        description: 'Nuestra hamburguesa insignia con papas.',
+        weekday: 3,
+        name: 'Rueda de muzza',
+        description: 'Una rueda de muzzarella con refresco de 1 L de regalo.',
+        condition: 'Sólo delivery',
+        flyer: real.promoMiercoles,
+        cta: {
+          label: 'Pedir la promo',
+          href: whatsapp('¡Hola La Toscana! Quiero la Promo Miércoles: rueda de muzza con refresco de regalo.'),
+        },
       },
       {
         id: 'jueves',
         day: 'Jueves',
-        name: 'Picada para dos',
-        description: 'Fiambres, quesos y frituras para compartir.',
-      },
-      {
-        id: 'finde',
-        day: 'Fin de semana',
-        name: 'Cocina completa',
-        description: 'La carta entera, música y sobremesa larga.',
+        weekday: 4,
+        name: 'Brasero con guarnición',
+        description: 'Brasero de carnes con guarnición y refresco de 1 L de regalo.',
+        condition: 'Sólo delivery',
+        flyer: real.promoJueves,
+        cta: {
+          label: 'Pedir la promo',
+          href: whatsapp('¡Hola La Toscana! Quiero la Promo Jueves: brasero con guarnición y refresco de regalo.'),
+        },
       },
     ],
   },
@@ -319,31 +361,38 @@ export const site: SiteContent = {
       href: whatsapp('¡Hola! Quiero reservar una mesa en La Toscana.'),
     },
     phoneCta: { label: 'Llamar al restaurante', href: 'tel:+59893379047' },
-    photo: photos.reservations,
+    photo: real.salon,
   },
 
   events: {
     kicker: 'Eventos y celebraciones',
     title: 'Festejá como te gusta',
-    body: 'Cumpleaños, despedidas, cenas de empresa o una cata entre amigos: preparamos el brindis, el menú especial y todo lo demás. Vos solo traé a tu gente.',
+    body: 'Cumpleaños, despedidas y cenas de empresa en un salón íntimo: brindis, menú a medida y atención personalizada. Vos traé a tu gente; del resto nos encargamos.',
     types: [
-      { name: 'Cumpleaños', detail: 'Brindis y torta incluidos' },
-      { name: 'Despedidas', detail: 'Menú por persona a medida' },
-      { name: 'Cenas de empresa', detail: 'Salón reservado' },
-      { name: 'Música en vivo y catas', detail: 'Fechas especiales' },
+      { name: 'Cumpleaños', detail: 'Brindis y menú especial' },
+      { name: 'Despedidas', detail: 'Todo listo para festejar' },
+      { name: 'Cenas de empresa', detail: 'Menú a medida' },
+      { name: 'Salón íntimo', detail: 'Atención personalizada' },
     ],
     cta: {
-      label: 'Consultar por un evento',
+      label: 'Reservá tu fecha',
       href: whatsapp('¡Hola! Quiero consultar por un evento en La Toscana.'),
     },
-    photo: photos.events,
+    photo: real.flyerEventos,
   },
 
   gallery: {
+    kicker: 'Así se vive',
     title: 'Estar en La Toscana',
     linkLabel: '@latoscanaflorida',
     linkHref: 'https://www.instagram.com/latoscanaflorida',
-    photos: [...photos.gallery],
+    items: [
+      { photo: real.ensalada, caption: 'Ensalada con pollo crocante' },
+      { photo: real.fuegoCopas, caption: 'Copas frente al fuego' },
+      { photo: real.sandwich, caption: 'Sándwich en pan casero' },
+      { photo: real.brasero, caption: 'Brasero frente al cartel' },
+      { photo: real.tragosBarra, caption: 'Tragos de la barra' },
+    ],
   },
 
   reviews: {
@@ -387,7 +436,7 @@ export const site: SiteContent = {
         href: 'https://www.instagram.com/latoscanaflorida',
       },
     ],
-    photo: photos.location,
+    photo: real.cartel,
     mapHref: 'https://www.google.com/maps/search/?api=1&query=La+Toscana+Florida+Uruguay',
     mapLinkLabel: 'Ver en Google Maps',
   },

@@ -28,8 +28,8 @@ npm run typecheck  # tsc --noEmit
 ## Qué hay en la página
 
 Una sola homepage, en este orden: header · hero · platos de la casa · la carta ·
-cómo pedir · la experiencia · promos de la semana · reservas · eventos ·
-galería · reseñas · ubicación · cierre · footer.
+cómo pedir · un día en La Toscana (video) · la experiencia · promos de la semana ·
+reservas · eventos · galería · reseñas · ubicación · cierre · footer.
 
 El orden no es decorativo: primero el impacto, después lo que se come y cómo
 pedirlo (quien llega desde Instagram o Maps casi siempre viene a comer), luego
@@ -50,7 +50,8 @@ Fuera de la home: `/checkout` (finalizar pedido y confirmación) y
 | `components/shop/` | Tarjeta y hoja de producto, carrito, marco de las pantallas de compra, iconos |
 | `content/` | **Todo el texto, los precios y los datos de contacto** |
 | `styles/tokens.css` | El design system: todos los tokens |
-| `public/fotos/` | Donde van las fotos reales |
+| `public/media/` | Fotos, flyers, logo y video reales, listos para la web |
+| `media/` | Los originales tal como llegaron, y su documentación |
 
 ---
 
@@ -64,7 +65,8 @@ en `content/types.ts`. Para los cambios del día a día no hace falta tocar nada
 | Un precio, un horario, el teléfono | `content/site.ts` |
 | Agregar un plato destacado | Un objeto más en `dishes.items` |
 | Agregar un plato a la carta | Un objeto más en la categoría de `menu.categories` |
-| La promo destacada del hero | `promoBar.text` (o `enabled: false` para apagarla) |
+| Las promos de la semana | `promos.items`: día, texto, flyer y mensaje de WhatsApp |
+| El chip de promo del hero | Muestra sola la promo del día; `promoBar.text` es el texto de los demás días |
 | Los mensajes de WhatsApp | La función `whatsapp()` arriba de `content/site.ts` |
 
 El botón **"cargar más platos"** se ajusta solo: muestra `dishes.initialCount` y
@@ -87,31 +89,42 @@ export async function getSiteContent(): Promise<SiteContent> {
 
 ---
 
-## Las fotos
+## Fotos y video
 
-> **Las fotos actuales son provisorias.** Son imágenes libres de Unsplash puestas
-> para poder ver la página terminada. La fotografía es el activo más importante de
-> este sitio: conviene reemplazarlas por fotos reales del salón, la cocina y los
-> platos antes de publicar.
+**La web usa material real de La Toscana**: fotos de Instagram del restaurante,
+cuadros extraídos del reel "Un día en La Toscana" y los flyers oficiales de
+promos y eventos. Está en `public/media/`, organizado por tipo, y documentado
+archivo por archivo en `media/README.md` (incluye qué se descartó y por qué).
 
-`content/photos.ts` es el único archivo con imágenes. Para reemplazarlas:
+`content/photos.ts` es el único registro de imágenes:
 
-1. Poné los archivos en `public/fotos/`.
-2. Cambiá el `src` a `/fotos/sorrentinos.jpg`.
+- **`real`** — el material del restaurante, con `alt` real en español,
+  dimensiones y punto focal por foto.
+- **`stock`** — Unsplash, sólo para los platos de la carta que todavía no
+  tienen foto propia.
 
-No hay que tocar ningún componente. `<Photo>` acepta tanto una URL de CDN como una
-ruta local.
+`content/productPhotos.ts` une cada producto del catálogo con su foto: la misma
+imagen se ve en la tarjeta, el detalle y el carrito. Un plato sólo recibe una
+foto real cuando hay evidencia de que es ese plato.
 
 Cada foto declara además:
 
-- **`alt`** — texto real en español; es un sitio público, importa.
-- **`tone`** — un lavado cálido que se ve mientras la imagen carga y que queda en
-  su lugar si el archivo falta, para que un hueco nunca se vea como una imagen rota.
-- **`focal`** *(opcional)* — el `object-position` del recorte. En el celular los
-  marcos son verticales y en escritorio apaisados; esto mantiene el plato en cuadro
-  en los dos.
+- **`tone`** — un lavado cálido que se ve mientras la imagen carga.
+- **`focal`** *(opcional)* — el `object-position` del recorte.
+- **`width` / `height`** — la proporción original; la galería y los flyers la
+  respetan en vez de recortar todo igual.
 
----
+### La sección del video
+
+"Un día en La Toscana" (`components/Film.tsx`) es una sección
+cinematográfica: el reel arranca en un marco contenido bajo el título y, a
+medida que se scrollea, crece, pierde la inclinación y el radio, y termina
+ocupando la pantalla entera. No hay scroll-jacking: un contenedor sticky hace
+de escenario y un único `requestAnimationFrame` lee el progreso y escribe sólo
+`transform` y `opacity`. En teléfono la expansión es más corta. El video se
+descarga recién al acercarse, se reproduce sin sonido sólo mientras se ve y
+tiene botón de pausa. Con `prefers-reduced-motion` es una composición estática
+y el video no arranca solo.
 
 ## Diseño
 
@@ -122,8 +135,9 @@ marcos ni filetes; superficies con profundidad apenas perceptible.
 
 ### Tipografía
 
-- **Fraunces** (serif) sólo para la marca, los titulares y las frases
-  editoriales.
+- **El logo script real** de La Toscana, como máscara (`.brandMark`), en el
+  header, el cierre, el footer y las pantallas de compra.
+- **Fraunces** (serif) para los titulares y las frases editoriales.
 - **DM Sans** para toda la interfaz: navegación, precios, botones, formularios,
   chips, carrito y checkout.
 

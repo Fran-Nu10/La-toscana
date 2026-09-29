@@ -6,6 +6,9 @@ export function FinalCta({ finalCta }: { finalCta: SiteContent['finalCta'] }) {
   return (
     <section className={styles.section}>
       <div className={`container ${styles.inner}`}>
+        <span className={styles.mark} aria-hidden="true">
+          <span className="brandMark" />
+        </span>
         <p className="kicker kicker--dark">{finalCta.kicker}</p>
         <h2 className={styles.title}>{finalCta.title}</h2>
         <div className={styles.actions}>

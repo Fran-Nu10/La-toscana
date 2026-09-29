@@ -24,8 +24,8 @@ export function ShopShell({ children, back, width = 'narrow' }: Props) {
             <span className={styles.backIcon}>{ShopIcons.arrow}</span>
             {back.label}
           </Link>
-          <Link href="/" className={styles.brand}>
-            La Toscana
+          <Link href="/" className={styles.brand} aria-label="La Toscana, inicio">
+            <span className="brandMark" aria-hidden="true" />
           </Link>
         </div>
       </header>

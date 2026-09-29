@@ -65,7 +65,7 @@ export function Header({ brand, nav, order, reserve, contact }: Props) {
       <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.inner}>
           <a href="#inicio" className={styles.brand} aria-label={`${brand}, inicio`}>
-            {brand}
+            <span className="brandMark" aria-hidden="true" />
           </a>
 
           <nav className={styles.nav} aria-label="Navegación principal">
@@ -105,7 +105,9 @@ export function Header({ brand, nav, order, reserve, contact }: Props) {
         inert={!open}
       >
         <div className={styles.panelHead}>
-          <span className={styles.panelBrand}>{brand}</span>
+          <span className={styles.panelBrand} role="img" aria-label={brand}>
+            <span className="brandMark" aria-hidden="true" />
+          </span>
           <button
             ref={closeRef}
             type="button"

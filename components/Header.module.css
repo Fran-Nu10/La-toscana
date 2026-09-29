@@ -7,6 +7,7 @@
   /* Sobre el hero: transparente con tinta clara. */
   --hd-ink: var(--dark-ink);
   --hd-ink-2: rgba(244, 237, 225, 0.78);
+  --hd-brand: var(--brand-amber);
   --hd-bg: transparent;
   --hd-line: transparent;
   background: var(--hd-bg);
@@ -15,9 +16,18 @@
   transition: background-color var(--dur) ease, border-color var(--dur) ease, color var(--dur) ease;
 }
 
+:global(html[data-film='immersive']) .header {
+  transform: translateY(-100%);
+}
+.header {
+  transition: background-color var(--dur) ease, border-color var(--dur) ease, color var(--dur) ease,
+    transform var(--dur-slow) var(--ease);
+}
+
 .scrolled {
   --hd-ink: var(--ink);
   --hd-ink-2: var(--ink-2);
+  --hd-brand: var(--ink);
   --hd-bg: rgba(245, 239, 228, 0.86);
   --hd-line: var(--line);
   backdrop-filter: blur(14px) saturate(1.2);
@@ -35,19 +45,14 @@
 }
 
 .brand {
+  --brand-w: 118px;
   display: inline-flex;
   align-items: center;
   min-height: var(--tap);
   margin-right: auto;
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-variation-settings: 'opsz' 48, 'SOFT' 60;
-  font-size: 1.5rem;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  color: var(--hd-ink);
-  white-space: nowrap;
-  transition: color var(--dur) ease;
+  /* Sobre el hero, el ámbar del cartel real; al scrollear, espresso. */
+  color: var(--hd-brand);
+  transition: color var(--dur) ease, opacity var(--dur-fast) ease;
 }
 
 /* ── Navegación de escritorio ─────────────────────────────────────────────── */
@@ -140,10 +145,9 @@
 }
 
 .panelBrand {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: 1.5rem;
-  letter-spacing: -0.02em;
+  --brand-w: 118px;
+  display: inline-flex;
+  color: var(--ink);
 }
 
 .close {
@@ -245,8 +249,8 @@
     min-height: 72px;
   }
   .brand {
+    --brand-w: 136px;
     margin-right: 0;
-    font-size: 1.625rem;
   }
   .nav {
     display: flex;
@@ -272,8 +276,7 @@
     box-shadow: var(--shadow-md);
   }
   .brand:hover {
-    color: var(--hd-ink);
-    opacity: 0.85;
+    opacity: 0.8;
   }
   .panelLink:hover {
     color: var(--accent-text);

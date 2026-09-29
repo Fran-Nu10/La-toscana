@@ -134,5 +134,16 @@ export const ShopIcons = {
     20,
   ),
   music: icon(<path d="M9 18a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm11-2a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM9 18V6l11-2v12" />, 20),
+  play: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+    </svg>
+  ),
+  pause: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <rect x="6" y="5" width="4.2" height="14" rx="1.2" />
+      <rect x="13.8" y="5" width="4.2" height="14" rx="1.2" />
+    </svg>
+  ),
   external: icon(<path d="M14 4h6v6M20 4l-9 9M18 14v5H5V6h5" />, 15),
 }

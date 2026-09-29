@@ -1,20 +1,50 @@
 .hero {
   position: relative;
-  display: flex;
-  min-height: max(560px, 100svh);
   background: var(--dark-bg);
   color: var(--dark-ink);
   overflow: hidden;
   isolation: isolate;
 }
 
-.photo {
+/* Un brillo de fuego, muy bajo, detrás de la composición. */
+.glow {
   position: absolute;
   inset: 0;
-  z-index: -2;
+  z-index: -1;
+  background:
+    radial-gradient(70% 55% at 80% 30%, rgba(242, 157, 27, 0.16), transparent 70%),
+    radial-gradient(60% 50% at 10% 100%, rgba(184, 83, 46, 0.14), transparent 70%);
 }
-/* Un zoom lento de entrada: sólo transform, y se apaga con reduced motion. */
-.js .photo {
+
+/* ── Teléfono: foto arriba, texto sobre la noche ─────────────────────────── */
+
+.inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.media {
+  position: relative;
+}
+
+.mainPhoto {
+  position: relative;
+  height: clamp(340px, 58svh, 560px);
+  overflow: hidden;
+}
+/* Arriba: calma el cartel para que conviva con el header. Abajo: funde la
+   foto con la noche donde empieza el texto. */
+.mainPhoto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(28, 23, 20, 0.7) 0%, rgba(28, 23, 20, 0) 22%),
+    linear-gradient(to top, var(--dark-bg) 0%, rgba(28, 23, 20, 0.55) 16%, rgba(28, 23, 20, 0) 38%);
+}
+.js .mainPhoto img {
   animation: heroZoom 1.8s var(--ease) both;
 }
 @keyframes heroZoom {
@@ -26,55 +56,58 @@
   }
 }
 
-.scrim {
+.caption {
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(to top, rgba(20, 15, 12, 0.92) 0%, rgba(20, 15, 12, 0.55) 38%, rgba(20, 15, 12, 0.12) 70%, rgba(20, 15, 12, 0.35) 100%),
-    linear-gradient(to right, rgba(20, 15, 12, 0.35), transparent 60%);
+  right: var(--gutter);
+  bottom: 22%;
+  z-index: 2;
+  min-height: 28px;
+  font-weight: 500;
 }
 
-.inner {
-  position: relative;
-  width: 100%;
-  max-width: var(--page-wide);
-  margin-inline: auto;
-  padding: calc(var(--header-h) + 24px) var(--gutter) clamp(28px, 6vw, 56px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 24px;
+.secondPhoto {
+  display: none;
 }
 
 .content {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  max-width: 640px;
+  margin-top: -56px;
+  padding: 0 var(--gutter) clamp(32px, 7vw, 56px);
 }
 
 .promo {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 32px;
+  max-width: 100%;
   padding: 0 14px 0 10px;
   border-radius: var(--r-pill);
-  background: rgba(255, 250, 242, 0.12);
+  background: rgba(255, 250, 242, 0.1);
   border: 1px solid rgba(255, 250, 242, 0.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font: 500 var(--fs-caption) / 1 var(--font-sans);
+  font: 500 var(--fs-caption) / 1.2 var(--font-sans);
   color: var(--dark-ink);
-  margin-bottom: 18px;
+  margin-bottom: 14px;
+  transition: background-color var(--dur-fast) ease;
+}
+/* Área de toque de 44px sin agrandar el chip. */
+.promo::after {
+  content: '';
+  position: absolute;
+  inset: -6px 0;
 }
 .promoDot {
+  flex: none;
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--dark-accent);
-  box-shadow: 0 0 0 3px rgba(224, 162, 106, 0.25);
+  background: var(--brand-amber);
+  box-shadow: 0 0 0 3px rgba(242, 157, 27, 0.25);
 }
 
 .kicker {
@@ -82,41 +115,41 @@
 }
 
 .title {
-  margin-top: 12px;
+  margin-top: 10px;
   font-size: var(--fs-display);
   line-height: var(--lh-display);
   letter-spacing: -0.025em;
   font-weight: 500;
   font-variation-settings: 'opsz' 144, 'SOFT' 40;
   color: var(--dark-ink);
-  max-width: 12ch;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+  max-width: 13ch;
 }
 
 .subtitle {
-  margin-top: 16px;
-  max-width: 40ch;
+  margin-top: 14px;
+  max-width: 42ch;
   font-size: var(--fs-lead);
   line-height: 1.45;
   color: var(--dark-ink-2);
 }
 
 .actions {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   width: 100%;
-  margin-top: clamp(22px, 5vw, 32px);
+  margin-top: clamp(20px, 5vw, 28px);
 }
 .action {
   width: 100%;
+  padding-inline: 14px;
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 20px;
-  margin-top: clamp(20px, 5vw, 28px);
+  margin-top: 18px;
   font: 500 var(--fs-caption) var(--font-sans);
   color: var(--dark-ink-2);
 }
@@ -129,60 +162,89 @@
   color: var(--dark-accent);
 }
 
-/* La frase de marca: nota al pie en teléfono, panel a la derecha en escritorio. */
-.tagline {
-  display: none;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: var(--fs-h4);
-  line-height: 1.35;
-  color: var(--dark-ink-2);
-  max-width: 24ch;
-}
-.taglineMark {
-  color: var(--dark-accent);
-}
-
-/* ── Breakpoints ─────────────────────────────────────────────────────────── */
-
-@media (min-width: 480px) {
+/* ── Tablet ──────────────────────────────────────────────────────────────── */
+@media (min-width: 560px) {
   .actions {
-    flex-direction: row;
+    display: flex;
     flex-wrap: wrap;
     width: auto;
   }
   .action {
     width: auto;
-    min-width: 168px;
+    min-width: 176px;
+    padding-inline: 28px;
+  }
+  .mainPhoto {
+    height: clamp(420px, 62svh, 640px);
   }
 }
 
+/* ── Escritorio: composición dividida ────────────────────────────────────── */
 @media (min-width: 960px) {
-  .hero {
-    min-height: min(92svh, 860px);
-  }
   .inner {
-    flex-direction: row;
-    align-items: flex-end;
+    flex-direction: row-reverse;
+    align-items: center;
     justify-content: space-between;
-    padding-bottom: clamp(48px, 6vw, 80px);
+    gap: clamp(40px, 6vw, 96px);
+    max-width: var(--page-wide);
+    min-height: min(100svh, 920px);
+    margin-inline: auto;
+    padding: calc(72px + 32px) var(--gutter) clamp(48px, 6vw, 80px);
   }
-  .tagline {
+
+  .media {
+    flex: 0 0 42%;
+    max-width: 560px;
+    padding: 0 0 48px 48px;
+  }
+  .mainPhoto {
+    height: auto;
+    aspect-ratio: 3 / 4;
+    max-height: calc(100svh - 180px);
+    border-radius: var(--r-xl);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  }
+  .mainPhoto::after {
+    background: linear-gradient(to top, rgba(20, 15, 12, 0.55) 0%, rgba(20, 15, 12, 0) 30%);
+  }
+  .caption {
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .secondPhoto {
     display: block;
-    padding: 22px 26px;
-    border-left: 1px solid rgba(255, 250, 242, 0.2);
-    max-width: 22ch;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 3;
+    width: 38%;
+    aspect-ratio: 1;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    outline: 8px solid var(--dark-bg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   }
-  .scrim {
-    background:
-      linear-gradient(to top, rgba(20, 15, 12, 0.9) 0%, rgba(20, 15, 12, 0.45) 40%, rgba(20, 15, 12, 0.08) 75%, rgba(20, 15, 12, 0.3) 100%),
-      linear-gradient(to right, rgba(20, 15, 12, 0.45), transparent 55%);
+
+  .content {
+    flex: 1;
+    max-width: 600px;
+    margin-top: 0;
+    padding: 0;
+  }
+  .subtitle {
+    margin-top: 20px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .promo:hover {
+    background: rgba(255, 250, 242, 0.18);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .photo {
+  .js .mainPhoto img {
     animation: none;
   }
 }

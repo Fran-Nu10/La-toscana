@@ -44,11 +44,10 @@
 }
 
 .brand {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-variation-settings: 'opsz' 48, 'SOFT' 60;
-  font-size: 1.375rem;
-  letter-spacing: -0.02em;
+  --brand-w: 112px;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
   color: var(--ink);
 }
 

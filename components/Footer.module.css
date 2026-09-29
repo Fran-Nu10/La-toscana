@@ -17,13 +17,9 @@
 }
 
 .brand {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-variation-settings: 'opsz' 72, 'SOFT' 50;
-  font-size: 2rem;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  color: var(--dark-ink);
+  --brand-w: 176px;
+  display: inline-flex;
+  color: var(--brand-amber);
 }
 
 .about {
@@ -97,7 +93,6 @@
 }
 .colophon {
   font-family: var(--font-serif);
-  font-style: italic;
   font-size: var(--fs-small);
 }
 

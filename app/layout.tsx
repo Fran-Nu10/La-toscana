@@ -15,7 +15,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 const serif = Fraunces({
   subsets: ['latin'],
   axes: ['opsz', 'SOFT'],
-  style: ['normal', 'italic'],
+  /* Sin cursiva: ninguna pieza de la web la usa y costaba ~150 KB de precarga. */
+  style: ['normal'],
   display: 'swap',
   variable: '--font-fraunces',
 })

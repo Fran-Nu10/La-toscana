@@ -2,45 +2,88 @@
   background: var(--surface-2);
 }
 
-.grid {
-  margin-top: var(--block-gap);
-}
-
-.card {
+.head {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: min(72vw, 280px);
-  min-height: 200px;
-  padding: 22px;
-  border-radius: var(--r-lg);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-xs);
-  transition: transform var(--dur) var(--ease), box-shadow var(--dur) ease;
-}
-/* La última tarjeta (el fin de semana) va en espresso: el punto alto de la semana. */
-.card:last-child {
-  background: var(--dark-bg);
-  border-color: var(--dark-bg);
-  color: var(--dark-ink);
+  gap: 16px;
 }
 
-.day {
+.note {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  align-self: flex-start;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font: 500 var(--fs-caption) var(--font-sans);
+  color: var(--ink-2);
+}
+.note svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-text);
+}
+
+.rail {
+  margin-top: var(--block-gap);
+  gap: 16px;
+}
+
+.card {
+  width: min(74vw, 300px);
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+/* El flyer completo, con su proporción real: nada de su texto se corta. */
+.flyer {
+  position: relative;
+  width: 100%;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--dark-bg);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) ease;
+}
+.flyer img {
+  object-fit: contain;
+}
+.today .flyer {
+  box-shadow: 0 0 0 3px var(--surface-2), 0 0 0 5px var(--brand-amber), var(--shadow-md);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding-inline: 4px;
+  flex: 1;
+}
+
+.dayRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Reserva el alto de la insignia "Hoy": las tres tarjetas quedan alineadas. */
+  min-height: 24px;
+}
+.day {
   font: 600 var(--fs-micro) var(--font-sans);
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
   color: var(--accent-text);
 }
-.card:last-child .day {
-  color: var(--dark-accent);
-}
 
 .name {
-  margin-top: auto;
   font-size: var(--fs-h3);
   line-height: 1.1;
 }
@@ -50,14 +93,30 @@
   line-height: 1.5;
   color: var(--ink-2);
 }
-.card:last-child .description {
-  color: var(--dark-ink-2);
+
+.condition {
+  font: 600 var(--fs-caption) var(--font-sans);
+  color: var(--ink);
+}
+
+.cta {
+  margin-top: auto;
+  transform: translateY(6px);
 }
 
 @media (min-width: 720px) {
-  .grid {
+  .head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .note {
+    align-self: flex-end;
+  }
+  .rail {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--card-gap);
     overflow: visible;
     padding-inline: 0;
@@ -66,19 +125,22 @@
   }
   .card {
     width: auto;
-    min-height: 220px;
-    padding: 26px;
   }
 }
+
 @media (min-width: 1100px) {
-  .grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .rail {
+    grid-template-columns: repeat(3, minmax(0, 340px));
+    justify-content: space-between;
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+  .article:hover .flyer {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .today .article:hover .flyer {
+    box-shadow: 0 0 0 3px var(--surface-2), 0 0 0 5px var(--brand-amber), var(--shadow-lg);
   }
 }

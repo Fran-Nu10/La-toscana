@@ -182,16 +182,6 @@ h4 {
   color: var(--dark-ink-2);
 }
 
-/* Enfatiza una palabra dentro de un titular serif. */
-.em {
-  font-style: italic;
-  font-weight: 400;
-  color: var(--accent-text);
-}
-.em--dark {
-  color: var(--dark-accent);
-}
-
 .tnum {
   font-variant-numeric: tabular-nums;
 }
@@ -221,6 +211,20 @@ h4 {
 .skipLink:focus-visible {
   left: 16px;
   top: 16px;
+}
+
+/* ── Logo real ───────────────────────────────────────────────────────────────
+   El logo script de La Toscana como máscara: toma el color de `currentColor`,
+   así funciona en ámbar sobre la noche y en espresso sobre marfil. El texto
+   real queda en el HTML para lectores de pantalla y buscadores. */
+.brandMark {
+  display: inline-block;
+  width: var(--brand-w, 132px);
+  aspect-ratio: 1094 / 326;
+  background-color: currentColor;
+  -webkit-mask: url('/media/brand/logo-la-toscana.png') center / contain no-repeat;
+  mask: url('/media/brand/logo-la-toscana.png') center / contain no-repeat;
+  flex: none;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════

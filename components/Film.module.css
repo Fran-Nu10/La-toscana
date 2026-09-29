@@ -1,0 +1,286 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   "Un día en La Toscana" — sección cinematográfica.
+
+   Base (sin JS o con reduced motion): composición estática, título y video
+   lado a lado en escritorio, apilados en teléfono. El modo scroll-driven sólo
+   se activa con `.js` y `prefers-reduced-motion: no-preference`.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.film {
+  position: relative;
+  background: var(--dark-bg);
+  color: var(--dark-ink);
+}
+
+/* ── Composición estática ────────────────────────────────────────────────── */
+
+.sticky {
+  display: grid;
+  gap: 28px;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--section-y) var(--gutter);
+}
+
+.ambient {
+  display: none;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 46ch;
+}
+
+.title {
+  font-size: var(--fs-h1);
+  color: var(--dark-ink);
+}
+
+.body {
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: var(--dark-ink-2);
+}
+
+.stage {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 420px);
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: #0d0a08;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.toggle {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 4;
+  background: rgba(20, 15, 12, 0.55);
+  border-color: rgba(255, 250, 242, 0.28);
+  color: var(--dark-ink);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.outro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.caption {
+  font: 500 var(--fs-caption) / 1.4 var(--font-sans);
+  letter-spacing: 0.04em;
+  color: var(--dark-ink-2);
+}
+
+@media (min-width: 960px) {
+  .sticky {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    align-content: center;
+    column-gap: clamp(48px, 7vw, 112px);
+  }
+  .intro {
+    grid-column: 1;
+    align-self: end;
+  }
+  .outro {
+    grid-column: 1;
+    align-self: start;
+  }
+  .stage {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: auto;
+  }
+  .frame {
+    height: min(80vh, 760px);
+  }
+}
+
+/* ── Modo cinematográfico ────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Teléfono y retrato: expansión corta. */
+  :global(.js) .track {
+    height: 190vh;
+  }
+
+  :global(.js) .sticky {
+    position: sticky;
+    top: 0;
+    display: block;
+    height: 100vh;
+    height: 100lvh;
+    max-width: none;
+    padding: 0;
+    overflow: hidden;
+    perspective: 1400px;
+    perspective-origin: 50% 42%;
+  }
+
+  :global(.js) .intro {
+    position: absolute;
+    z-index: 3;
+    top: calc(var(--header-h) + 14px);
+    left: var(--gutter);
+    right: var(--gutter);
+    gap: 8px;
+    will-change: transform, opacity;
+  }
+  :global(.js) .title {
+    font-size: clamp(2rem, 7vw, 3rem);
+  }
+  :global(.js) .body {
+    font-size: var(--fs-small);
+    max-width: 40ch;
+  }
+
+  :global(.js) .stage {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    /* `justify-self: center` de la versión estática también alinea cajas
+       absolutas y las encogía a ancho cero. */
+    justify-self: stretch;
+    align-self: stretch;
+    transform-style: preserve-3d;
+  }
+
+  /* El marco ocupa, en reposo, el escenario entero; el JS lo reduce y lo
+     devuelve con transform. Estos valores son su estado inicial (p = 0). */
+  :global(.js) .frame {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    height: auto;
+    border-radius: 34px;
+    transform: translate3d(0, 16vh, 0) scale(0.7);
+    transform-origin: 50% 50%;
+    will-change: transform;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55);
+  }
+
+  :global(.js) .outro {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 96px 84px max(24px, env(safe-area-inset-bottom)) var(--gutter);
+    background: linear-gradient(to top, rgba(12, 9, 7, 0.82), rgba(12, 9, 7, 0));
+    opacity: 0;
+    visibility: hidden;
+    will-change: transform, opacity;
+  }
+  :global(.js) .caption {
+    color: var(--dark-ink);
+  }
+
+  :global(.js) .toggle {
+    position: absolute;
+    right: 16px;
+    bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  /* Pantallas apaisadas: el reel vertical a alto completo, centrado, y una
+     capa ambiente difuminada que llena los costados. */
+  @media (min-aspect-ratio: 3/4) {
+    :global(.js) .track {
+      height: 280vh;
+    }
+
+    :global(.js) .ambient {
+      display: block;
+      position: absolute;
+      inset: -4%;
+      z-index: 0;
+      opacity: 0;
+      background-size: cover;
+      background-position: center;
+      will-change: opacity;
+    }
+    :global(.js) .ambient::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at center, rgba(12, 9, 7, 0.1) 0%, rgba(12, 9, 7, 0.55) 55%, rgba(12, 9, 7, 0.85) 100%),
+        linear-gradient(to right, rgba(12, 9, 7, 0.7), rgba(12, 9, 7, 0) 40%);
+    }
+
+    :global(.js) .intro {
+      top: calc(var(--header-h) + 5vh);
+      left: 50%;
+      right: auto;
+      width: min(640px, calc(100% - 2 * var(--gutter)));
+      margin-left: calc(min(640px, calc(100% - 2 * var(--gutter))) / -2);
+      align-items: center;
+      text-align: center;
+    }
+    :global(.js) .title {
+      font-size: var(--fs-h1);
+    }
+    :global(.js) .body {
+      font-size: var(--fs-lead);
+    }
+
+    :global(.js) .frame {
+      inset: 0 auto;
+      left: 50%;
+      width: calc(100lvh * 9 / 16);
+      margin-left: calc(100lvh * -9 / 32);
+      border-radius: 40px;
+      transform: translate3d(0, 20vh, 0) rotateX(14deg) scale(0.5);
+    }
+
+    :global(.js) .outro {
+      left: var(--gutter);
+      right: auto;
+      bottom: 12vh;
+      width: min(320px, calc(50vw - 100lvh * 9 / 32 - 2 * var(--gutter)));
+      padding: 0;
+      background: none;
+    }
+
+    :global(.js) .toggle {
+      right: var(--gutter);
+      bottom: 12vh;
+    }
+  }
+}
+
+.ambientVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toggle:hover {
+    background: rgba(20, 15, 12, 0.75);
+    border-color: var(--dark-ink);
+  }
+}

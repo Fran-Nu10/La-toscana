@@ -1,35 +1,38 @@
-import { photos } from './photos'
+import { real, stock } from './photos'
 import type { Photo } from './types'
 
 /**
- * Foto por producto del catálogo.
+ * Foto por producto del catálogo: la única fuente de verdad para tarjeta,
+ * detalle y carrito.
  *
- * Los productos (`data/seed.ts`) son datos de comercio y no cargan imágenes; las
- * fotos viven en la capa de contenido. Este mapa une las dos cosas sin tocar el
- * modelo de datos: así la tarjeta y el detalle muestran el plato, y el día que
- * cada producto tenga su propia foto alcanza con cambiar acá.
- *
- * Un producto sin entrada no rompe nada: la tarjeta y el detalle dibujan un
- * fondo cálido de reemplazo.
+ * Sólo se asigna una foto real cuando hay evidencia de que es ese plato: la
+ * muzzarella sale del flyer oficial de la promo del miércoles ("1 rueda
+ * muzza"). El resto sigue con stock hasta tener foto propia. Un producto sin
+ * entrada dibuja un fondo cálido de reemplazo.
  */
 const byProductId: Record<string, Photo> = {
-  'sorrentinos-jyq': photos.dishes.sorrentinos,
-  'tallarines-toscana': photos.dishes.tallarines,
-  'noquis-papa': photos.dishes.noquis,
-  'lasana-carne': photos.dishes.lasagna,
-  'muzzarella-piedra': photos.dishes.muzzarella,
-  'napolitana': photos.dishes.muzzarella,
-  'toscana-especial': photos.dishes.pizzaToscana,
-  'entrecot-parrilla': photos.dishes.entrecot,
-  'pollo-champinon': photos.dishes.pollo,
-  'picada-dos': photos.dishes.picada,
-  'tabla-mar': photos.dishes.tablaDeMar,
-  'tiramisu': photos.dishes.tiramisu,
-  'flan-casero': photos.dishes.flan,
-  'tannat-reserva': photos.gallery[2],
-  'chardonnay': photos.gallery[2],
+  'sorrentinos-jyq': stock.sorrentinos,
+  'tallarines-toscana': stock.tallarines,
+  'noquis-papa': stock.noquis,
+  'lasana-carne': stock.lasagna,
+  'muzzarella-piedra': real.muzzarella,
+  'napolitana': stock.napolitana,
+  'toscana-especial': stock.pizzaToscana,
+  'entrecot-parrilla': stock.entrecot,
+  'pollo-champinon': stock.pollo,
+  'picada-dos': stock.picada,
+  'tabla-mar': stock.tablaDeMar,
+  'tiramisu': stock.tiramisu,
+  'flan-casero': stock.flan,
+  'tannat-reserva': stock.vino,
+  'chardonnay': stock.vino,
 }
 
 export function productPhoto(productId: string): Photo | undefined {
   return byProductId[productId]
+}
+
+/** Si la foto del producto es material real del restaurante. */
+export function isRealPhoto(photo: Photo | undefined): boolean {
+  return Boolean(photo?.src.startsWith('/media/'))
 }

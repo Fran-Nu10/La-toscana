@@ -82,9 +82,18 @@
 }
 
 .photo {
+  margin: 0;
   aspect-ratio: 4 / 3;
   border-radius: var(--r-xl);
   box-shadow: var(--shadow-md);
+}
+.photoCaption {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 1;
+  min-height: 28px;
+  font-weight: 500;
 }
 
 @media (min-width: 560px) {
@@ -108,8 +117,8 @@
     max-width: 520px;
   }
   .photo {
-    flex: 0 0 48%;
-    aspect-ratio: 4 / 4.2;
+    flex: 0 0 40%;
+    aspect-ratio: 3 / 4;
   }
 }
 

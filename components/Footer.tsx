@@ -10,7 +10,9 @@ export function Footer({ site }: { site: SiteContent }) {
     <footer className={styles.footer}>
       <div className={`container ${styles.grid}`}>
         <div className={styles.brandCol}>
-          <span className={styles.brand}>{brand.name}</span>
+          <span className={styles.brand} role="img" aria-label={brand.name}>
+            <span className="brandMark" aria-hidden="true" />
+          </span>
           <p className={styles.about}>{brand.description}</p>
           <div className={styles.social}>
             <a

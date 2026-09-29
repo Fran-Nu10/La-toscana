@@ -12,10 +12,20 @@
 }
 
 .photoMain {
+  margin: 0;
   width: 88%;
   aspect-ratio: 4 / 5;
   border-radius: var(--r-xl);
   box-shadow: var(--shadow-md);
+}
+
+.caption {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  z-index: 1;
+  min-height: 28px;
+  font-weight: 500;
 }
 
 .photoSmall {
@@ -81,7 +91,16 @@
   .photoMain {
     width: 82%;
   }
-  .photoSmall {
+  .caption {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  z-index: 1;
+  min-height: 28px;
+  font-weight: 500;
+}
+
+.photoSmall {
     width: 46%;
     outline-width: 8px;
   }

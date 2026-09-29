@@ -14,6 +14,14 @@
   gap: 16px;
 }
 
+.mark {
+  --brand-w: clamp(120px, 18vw, 180px);
+  display: inline-flex;
+  margin-bottom: 8px;
+  color: var(--brand-amber);
+  opacity: 0.9;
+}
+
 .title {
   font-size: var(--fs-display);
   line-height: var(--lh-display);

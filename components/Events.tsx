@@ -4,19 +4,23 @@ import { Reveal } from './Reveal'
 import { ShopIcons } from './shop/icons'
 import styles from './Events.module.css'
 
-const TYPE_ICONS = [ShopIcons.cake, ShopIcons.glass, ShopIcons.users, ShopIcons.music]
+const TYPE_ICONS = [ShopIcons.cake, ShopIcons.glass, ShopIcons.users, ShopIcons.store]
 
 /**
- * Eventos: foto vertical grande a un lado, y del otro los tipos de
- * celebración como una lista de fichas con icono. Un solo CTA, a WhatsApp.
+ * Eventos: el flyer real de "Cumples y despedidas" a un lado, completo, y del
+ * otro los tipos de celebración como fichas con icono. Un solo CTA, a WhatsApp.
  */
 export function Events({ events }: { events: SiteContent['events'] }) {
   return (
     <Reveal as="section" id="eventos" className="section">
       <div className={`container ${styles.grid}`}>
-        <div className={`frame ${styles.photo}`}>
-          <Photo photo={events.photo} sizes="(min-width: 960px) 560px, 100vw" />
-          <span className={`badge badge--glass ${styles.photoBadge}`}>{events.kicker}</span>
+        {/* El flyer oficial se muestra completo: su texto es contenido real y
+            no se recorta. El mismo texto vive en el alt y en la columna. */}
+        <div
+          className={`frame ${styles.photo}`}
+          style={{ aspectRatio: `${events.photo.width ?? 4} / ${events.photo.height ?? 5}` }}
+        >
+          <Photo photo={events.photo} sizes="(min-width: 960px) 520px, 100vw" />
         </div>
 
         <div className={styles.text}>

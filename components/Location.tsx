@@ -68,9 +68,12 @@ export function Location({ location }: { location: SiteContent['location'] }) {
           </div>
         </div>
 
-        <div className={`frame ${styles.photo}`}>
-          <Photo photo={location.photo} sizes="(min-width: 960px) 560px, 100vw" />
-        </div>
+        <figure className={`frame ${styles.photo}`}>
+          <Photo photo={location.photo} sizes="(min-width: 960px) 480px, 100vw" />
+          <figcaption className={`badge badge--glass ${styles.photoCaption}`}>
+            El cartel del salón
+          </figcaption>
+        </figure>
       </div>
     </section>
   )

@@ -1,35 +1,50 @@
-import type { SiteContent } from '@/content'
+import type { Promo, SiteContent } from '@/content'
 import { Photo } from './Photo'
+import { TodayPromo } from './TodayPromo'
 import { ShopIcons } from './shop/icons'
 import styles from './Hero.module.css'
 
 type Props = {
   hero: SiteContent['hero']
-  /** La promo de la semana, como un chip discreto sobre el titular. */
-  promo?: string
+  promos: Promo[]
+  /** Texto del chip cuando hoy no hay promo. */
+  promoFallback?: string
 }
 
 /**
- * La primera pantalla vende la comida y la experiencia. Fotografía a sangre,
- * el titular abajo a la izquierda donde el degradé es más profundo, y las dos
- * acciones en el orden de toda la web: pedir primero, reservar después.
- * Desde escritorio, un panel con horario y ciudad ocupa el vacío de la derecha.
+ * La primera pantalla vende La Toscana real: una milanesa recién servida
+ * frente al cartel dorado del salón.
+ *
+ * Teléfono: la foto vertical a sangre ocupa la parte alta y el texto se apoya
+ * sobre la noche, debajo del plato — nunca encima. Escritorio: composición
+ * dividida, texto a la izquierda y la foto vertical enmarcada a la derecha,
+ * con un trago de la barra superpuesto.
  */
-export function Hero({ hero, promo }: Props) {
+export function Hero({ hero, promos, promoFallback }: Props) {
   return (
     <section id="inicio" className={styles.hero}>
-      <div className={styles.photo}>
-        <Photo photo={hero.photo} sizes="100vw" priority />
-      </div>
-      <div className={styles.scrim} aria-hidden="true" />
+      <div className={styles.glow} aria-hidden="true" />
 
       <div className={styles.inner}>
+        <div className={styles.media}>
+          <div className={styles.mainPhoto}>
+            {/* LCP: la única imagen priority de la página. */}
+            <Photo photo={hero.photo} sizes="(min-width: 960px) 42vw, 100vw" priority />
+            <span className={`badge badge--glass ${styles.caption}`}>{hero.photoCaption}</span>
+          </div>
+          <div className={styles.secondPhoto} aria-hidden="true">
+            <Photo photo={hero.secondaryPhoto} sizes="240px" />
+          </div>
+        </div>
+
         <div className={styles.content}>
-          {promo && (
-            <p className={styles.promo}>
-              <span className={styles.promoDot} aria-hidden="true" />
-              {promo}
-            </p>
+          {promoFallback && (
+            <TodayPromo
+              promos={promos}
+              fallback={promoFallback}
+              className={styles.promo}
+              dotClassName={styles.promoDot}
+            />
           )}
           <p className={`kicker kicker--plain ${styles.kicker}`}>{hero.kicker}</p>
           <h1 className={styles.title}>{hero.title}</h1>
@@ -56,13 +71,6 @@ export function Hero({ hero, promo }: Props) {
             </li>
           </ul>
         </div>
-
-        <p className={styles.tagline}>
-          <span className={styles.taglineMark} aria-hidden="true">
-            “
-          </span>
-          {hero.tagline}
-        </p>
       </div>
     </section>
   )

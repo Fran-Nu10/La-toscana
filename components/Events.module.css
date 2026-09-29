@@ -5,17 +5,10 @@
 }
 
 .photo {
-  aspect-ratio: 4 / 3;
+  width: 100%;
+  max-width: 520px;
   border-radius: var(--r-xl);
   box-shadow: var(--shadow-md);
-}
-.photoBadge {
-  position: absolute;
-  left: 16px;
-  bottom: 16px;
-  min-height: 30px;
-  padding-inline: 12px;
-  font-size: var(--fs-caption);
 }
 
 .text {
@@ -81,8 +74,7 @@
     gap: clamp(48px, 7vw, 112px);
   }
   .photo {
-    flex: 0 0 46%;
-    aspect-ratio: 4 / 5;
+    flex: 0 0 42%;
   }
   .text {
     flex: 1;

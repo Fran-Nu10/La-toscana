@@ -4,20 +4,23 @@ import { Reveal } from './Reveal'
 import styles from './Experience.module.css'
 
 /**
- * La historia, en una composición asimétrica: dos fotografías superpuestas a
- * un lado, el texto y los números al otro. Sin marcos ni filetes — las fotos
- * se apilan con radio y una sombra apenas perceptible.
+ * La historia, contada con el material real: el parrillero frente a la leña
+ * y el asado de tira sobre la parrilla, superpuestos a un lado; el texto y
+ * los números al otro.
  */
 export function Experience({ experience }: { experience: SiteContent['experience'] }) {
-  const [roomPhoto, kitchenPhoto] = experience.photos
+  const [roomPhoto, kitchenPhoto] = experience.photos // parrillero, asado
 
   return (
     <Reveal as="section" id="experiencia" className="section">
       <div className={`container ${styles.grid}`}>
         <div className={styles.photos}>
-          <div className={`frame ${styles.photoMain}`}>
+          <figure className={`frame ${styles.photoMain}`}>
             <Photo photo={roomPhoto} sizes="(min-width: 960px) 520px, 88vw" />
-          </div>
+            <figcaption className={`badge badge--glass ${styles.caption}`}>
+              {experience.photoCaption}
+            </figcaption>
+          </figure>
           <div className={`frame ${styles.photoSmall}`}>
             <Photo photo={kitchenPhoto} sizes="(min-width: 960px) 260px, 44vw" />
           </div>

@@ -2,6 +2,7 @@ import { getSiteContent } from '@/content'
 import { Dishes } from '@/components/Dishes'
 import { Events } from '@/components/Events'
 import { Experience } from '@/components/Experience'
+import { Film } from '@/components/Film'
 import { FinalCta } from '@/components/FinalCta'
 import { Footer } from '@/components/Footer'
 import { Gallery } from '@/components/Gallery'
@@ -17,10 +18,11 @@ import { Reviews } from '@/components/Reviews'
 /**
  * La home: un solo recorrido del hero al footer.
  *
- * Orden: impacto (hero) → qué se come (platos, carta) → cómo pedir → por qué
- * volver (experiencia, promos) → reservar → celebrar → ambiente → prueba
- * social → datos prácticos → cierre. Lo comercial va antes que la historia
- * porque quien llega desde Instagram o Maps viene, casi siempre, a comer.
+ * Orden: impacto (hero) → qué se come (platos, carta) → cómo pedir → la
+ * noche real en video (cinematográfica) → por qué volver (experiencia,
+ * promos) → reservar → celebrar → ambiente → prueba social → datos
+ * prácticos → cierre. Lo comercial va antes que la historia porque quien
+ * llega desde Instagram o Maps viene, casi siempre, a comer.
  */
 export default async function HomePage() {
   const site = await getSiteContent()
@@ -47,10 +49,15 @@ export default async function HomePage() {
       />
 
       <main>
-        <Hero hero={site.hero} promo={site.promoBar.enabled ? site.promoBar.text : undefined} />
+        <Hero
+          hero={site.hero}
+          promos={site.promos.items}
+          promoFallback={site.promoBar.enabled ? site.promoBar.text : undefined}
+        />
         <Dishes dishes={site.dishes} />
         <Menu menu={site.menu} />
         <Order order={site.order} />
+        <Film film={site.film} />
         <Experience experience={site.experience} />
         <Promos promos={site.promos} />
         <Reservations reservations={site.reservations} />

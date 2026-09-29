@@ -58,6 +58,11 @@
   --dark-line: rgba(244, 237, 225, 0.14);
   --dark-accent: #e0a26a;   /* bronce claro sobre espresso: 8.4:1 */
 
+  /* ── Color de marca real ────────────────────────────────────────────────
+     Medido del logo de La Toscana (el ámbar del cartel y los flyers). Sólo
+     para la marca sobre fondos oscuros; nunca para texto sobre claro. */
+  --brand-amber: #f29d1b;
+
   /* ── Tipografía ─────────────────────────────────────────────────────── */
   /* next/font define --font-fraunces y --font-dm-sans en <html>; los
      fallbacks quedan por si algún día se sirven de otra forma. */

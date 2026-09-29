@@ -1,35 +1,29 @@
 import type { Photo, PhotoTone } from './types'
 
 /**
- * Photography, in one place.
+ * Fotografía, en un solo lugar.
  *
- * These are free Unsplash stand-ins so the homepage can be shown finished. They
- * are placeholders for La Toscana's own photography — the layout is built to be
- * carried by real photos of the salón, la cocina y los platos.
+ * DESDE ESTA FASE LA FUENTE PRINCIPAL ES MATERIAL REAL DE LA TOSCANA
+ * (`/public/media/…`): fotos de Instagram del restaurante, cuadros extraídos
+ * del reel "Un día en La Toscana" y los flyers oficiales. Cada archivo se
+ * inspeccionó a mano antes de ubicarlo; ningún plato recibe una foto que no
+ * sea, con evidencia, ese plato.
  *
- * TO SWAP IN THE REAL PHOTOS: drop the files into `public/fotos/` and change
- * `src` below to `/fotos/sorrentinos.jpg`. Nothing else in the codebase needs to
- * change — `<Photo>` reads `src` directly and only builds a CDN srcset for URLs
- * that support Unsplash's `w=` parameter.
+ * El stock de Unsplash queda sólo en `stock`, para los productos de la carta
+ * que todavía no tienen foto propia. Cuando llegue una foto real de un plato,
+ * se agrega en `real` y se apunta el producto en `productPhotos.ts`.
  *
- * Every photo carries a `tone`: a warm wash that fills the frame while the file
- * loads and stays there if it ever fails, so a missing image reads as a matted
- * plate rather than a broken box.
+ * `width`/`height` son las dimensiones del archivo: la galería y los flyers las
+ * usan para respetar la proporción original en vez de recortar todo igual.
  */
 
 const UNSPLASH = 'https://images.unsplash.com'
 
-/** Builds a base Unsplash URL; `<Photo>` appends the width for each srcset entry. */
 function unsplash(id: string): string {
   return `${UNSPLASH}/photo-${id}?auto=format&fit=crop&q=80`
 }
 
-/**
- * @param focal `object-position` for the crop. Frames run tall on a phone and
- *   wide on a desktop, so a photograph whose subject sits low or off-centre
- *   needs this to survive both. Omit for centred subjects.
- */
-function photo(id: string, alt: string, tone: PhotoTone, focal?: string): Photo {
+function stockPhoto(id: string, alt: string, tone: PhotoTone, focal?: string): Photo {
   return {
     src: unsplash(id),
     alt,
@@ -39,63 +33,173 @@ function photo(id: string, alt: string, tone: PhotoTone, focal?: string): Photo 
   }
 }
 
-export const photos = {
-  /* El hero se recorta en vertical en el celular: el foco va algo por debajo
-     del centro, donde está la mesa servida. */
-  hero: photo(
-    '1414235077428-338989a2e8c0',
-    'Salón de La Toscana a la luz de las velas, mesas servidas',
+function local(
+  path: string,
+  alt: string,
+  tone: PhotoTone,
+  size: [number, number],
+  focal?: string,
+): Photo {
+  return {
+    src: `/media/${path}`,
+    alt,
+    tone,
+    width: size[0],
+    height: size[1],
+    ...(focal ? { focal } : {}),
+  }
+}
+
+/** Formatos de los archivos reales. */
+const REEL: [number, number] = [1080, 1920]
+const POST: [number, number] = [1351, 1689]
+const FLYER: [number, number] = [640, 1137]
+
+export const real = {
+  /* ── Comida ─────────────────────────────────────────────────────────── */
+  milanesa: local(
+    'food/milanesa-gratinada-cartel.jpg',
+    'Milanesa con queso fundido, panceta crocante, papas fritas y lechuga, sostenida frente al cartel dorado de La Toscana',
     'night',
-    '50% 58%',
+    REEL,
+    '50% 62%',
   ),
-  experienceRoom: photo(
-    '1552566626-52f8b828add9',
-    'Mesas del salón preparadas para la noche',
+  ensalada: local(
+    'food/ensalada-pollo-crocante.jpg',
+    'Ensalada con tiras de pollo crocante, tomates cherry, queso en cubos y aderezo',
     'ember',
+    [1440, 1800],
+  ),
+  trago: local(
+    'food/trago-frutilla.jpg',
+    'Trago con frutilla y frutos rojos en copa, con las luces del salón de noche detrás',
+    'wine',
+    [1440, 1477],
     '50% 45%',
   ),
-  experienceKitchen: photo(
-    '1556910103-1c02745aae4d',
-    'La cocina de La Toscana en plena preparación',
-    'night',
-  ),
-  reservations: photo(
-    '1414235077428-338989a2e8c0',
-    'Copas y velas en el ambiente nocturno del restaurante',
-    'night',
-    '50% 40%',
-  ),
-  events: photo(
-    '1530103862676-de8c9debad1d',
-    'Brindis en una mesa de celebración en La Toscana',
-    'wine',
-    '50% 42%',
-  ),
-  location: photo(
-    '1517248135467-4c7edcad34c4',
-    'Frente y ambiente de La Toscana en Florida, Uruguay',
+  asado: local(
+    'food/asado-de-tira-parrilla.jpg',
+    'Asado de tira dorándose sobre la parrilla a leña',
     'ember',
+    REEL,
+    '50% 55%',
   ),
+  sandwich: local(
+    'food/sandwich-casero.jpg',
+    'Sándwich en pan casero con jamón, queso, huevo y carne, con ensalada al costado',
+    'ember',
+    REEL,
+    '50% 55%',
+  ),
+  tragosBarra: local(
+    'food/tragos-de-la-barra.jpg',
+    'Dos tragos frutales con hojas de menta recién servidos',
+    'olive',
+    REEL,
+    '50% 55%',
+  ),
+  brasero: local(
+    'food/brasero-cartel.jpg',
+    'Brasero de carnes con morrón gratinado, en la mesa frente al cartel de La Toscana',
+    'night',
+    REEL,
+    '50% 65%',
+  ),
+  muzzarella: local(
+    'food/muzzarella-a-la-piedra.jpg',
+    'Pizza de muzzarella con salsa de tomate y orégano',
+    'ember',
+    [460, 575],
+  ),
+
+  /* ── El lugar y la gente ────────────────────────────────────────────── */
+  parrillero: local(
+    'restaurant/parrillero-fuego.jpg',
+    'El parrillero, con la remera de La Toscana, trabajando frente al fuego de leña',
+    'ember',
+    REEL,
+    '42% 60%',
+  ),
+  fuegoCopas: local(
+    'restaurant/fuego-copas.jpg',
+    'Copas de vino frente al fuego de la parrilla',
+    'ember',
+    REEL,
+    '50% 58%',
+  ),
+  salon: local(
+    'restaurant/salon-lleno.jpg',
+    'El salón de La Toscana de noche, con mesas ocupadas y guirnaldas de luces',
+    'night',
+    REEL,
+    '50% 66%',
+  ),
+  cartel: local(
+    'restaurant/cartel-salon.jpg',
+    'El cartel de madera de La Toscana colgado sobre la pared del salón',
+    'night',
+    REEL,
+    '50% 30%',
+  ),
+  flyerEventos: local(
+    'restaurant/flyer-cumples-despedidas.jpg',
+    'Flyer de La Toscana: "Cumples y despedidas en La Toscana. Brindis, menú especial y todo listo para festejar como te gusta. Reservá tu fecha por WhatsApp al 093 379 047". De fondo, una copa de vino y el salón de noche.',
+    'night',
+    POST,
+  ),
+
+  /* ── Flyers de promociones ──────────────────────────────────────────── */
+  promoMartes: local(
+    'promos/promo-martes-gramajo.jpg',
+    'Flyer Promo Martes: gramajo para 2 con refresco de 1 litro de regalo. Sólo delivery, pedidos al +598 93 379 047.',
+    'ember',
+    FLYER,
+  ),
+  promoMiercoles: local(
+    'promos/promo-miercoles-muzza.jpg',
+    'Flyer Promo Miércoles: una rueda de muzza con refresco de 1 litro de regalo. Sólo delivery, pedidos al +598 93 379 047.',
+    'ember',
+    FLYER,
+  ),
+  promoJueves: local(
+    'promos/promo-jueves-brasero.jpg',
+    'Flyer Promo Jueves: brasero con guarnición y refresco de 1 litro de regalo. Sólo delivery, pedidos al +598 93 379 047.',
+    'night',
+    FLYER,
+  ),
+} as const
+
+/** Stock provisorio: sólo para platos de la carta sin foto real todavía. */
+export const stock = {
+  sorrentinos: stockPhoto('1587740908075-9e245070dfaa', 'Sorrentinos de jamón y queso con salsa', 'ember'),
+  entrecot: stockPhoto('1504674900247-0877df9cc836', 'Entrecot a la parrilla con papas rústicas', 'wine'),
+  pizzaToscana: stockPhoto('1565299624946-b28f40a0ae38', 'Pizza a la piedra con jamón crudo y rúcula', 'ember'),
+  tallarines: stockPhoto('1621996346565-e3dbc646d9a9', 'Tallarines con crema, panceta y champiñones', 'olive'),
+  picada: stockPhoto('1541014741259-de529411b96a', 'Picada para dos con fiambres, quesos y frituras', 'parchment'),
+  lasagna: stockPhoto('1574894709920-11b28e7367e3', 'Lasaña de carne gratinada al horno', 'wine'),
+  tablaDeMar: stockPhoto('1559847844-5315695dadae', 'Tabla de mar con rabas y langostinos', 'olive'),
+  noquis: stockPhoto('1551892374-ecf8754cf8b0', 'Ñoquis de papa con salsa bolognesa', 'ember'),
+  tiramisu: stockPhoto('1571877227200-a0d98ea607e9', 'Tiramisú clásico de la casa', 'parchment'),
+  napolitana: stockPhoto('1513104890138-7c749659a591', 'Pizza napolitana a la piedra', 'ember'),
+  pollo: stockPhoto('1598515214211-89d3c73ae83b', 'Suprema de pollo con salsa de champiñones', 'olive'),
+  flan: stockPhoto('1551024506-0bccd828d307', 'Flan casero con dulce de leche', 'parchment'),
+  vino: stockPhoto('1510812431401-41d2bd2722f3', 'Copas y botellas de vino', 'ember'),
+} as const
+
+/** Alias de compatibilidad: `site.dishes.items` los sigue leyendo. */
+export const photos = {
   dishes: {
-    sorrentinos: photo('1587740908075-9e245070dfaa', 'Sorrentinos de jamón y queso con salsa', 'ember'),
-    entrecot: photo('1504674900247-0877df9cc836', 'Entrecot a la parrilla con papas rústicas', 'wine'),
-    pizzaToscana: photo('1565299624946-b28f40a0ae38', 'Pizza a la piedra con jamón crudo y rúcula', 'ember'),
-    tallarines: photo('1621996346565-e3dbc646d9a9', 'Tallarines con crema, panceta y champiñones', 'olive'),
-    picada: photo('1541014741259-de529411b96a', 'Picada para dos con fiambres, quesos y frituras', 'parchment'),
-    lasagna: photo('1574894709920-11b28e7367e3', 'Lasaña de carne gratinada al horno', 'wine'),
-    tablaDeMar: photo('1559847844-5315695dadae', 'Tabla de mar con rabas y langostinos', 'olive'),
-    noquis: photo('1551892374-ecf8754cf8b0', 'Ñoquis de papa con salsa bolognesa', 'ember'),
-    tiramisu: photo('1571877227200-a0d98ea607e9', 'Tiramisú clásico de la casa', 'parchment'),
-    muzzarella: photo('1513104890138-7c749659a591', 'Pizza de muzzarella a la piedra', 'ember'),
-    pollo: photo('1598515214211-89d3c73ae83b', 'Suprema de pollo con salsa de champiñones', 'olive'),
-    flan: photo('1551024506-0bccd828d307', 'Flan casero con dulce de leche', 'parchment'),
+    sorrentinos: stock.sorrentinos,
+    entrecot: stock.entrecot,
+    pizzaToscana: stock.pizzaToscana,
+    tallarines: stock.tallarines,
+    picada: stock.picada,
+    lasagna: stock.lasagna,
+    tablaDeMar: stock.tablaDeMar,
+    noquis: stock.noquis,
+    tiramisu: stock.tiramisu,
+    muzzarella: real.muzzarella,
+    pollo: stock.pollo,
+    flan: stock.flan,
   },
-  gallery: [
-    photo('1517248135467-4c7edcad34c4', 'El salón completo de La Toscana', 'night'),
-    photo('1544025162-d76694265947', 'Un plato servido en la mesa', 'wine'),
-    photo('1510812431401-41d2bd2722f3', 'La barra y la carta de vinos', 'ember'),
-    photo('1556910103-1c02745aae4d', 'La cocina durante el servicio', 'night'),
-    photo('1543007630-9710e4a00a20', 'Una mesa de amigos compartiendo la cena', 'wine'),
-    photo('1470124182917-cc6e71b22ecc', 'El postre de la casa', 'parchment'),
-  ],
 } as const
